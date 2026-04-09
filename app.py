@@ -14,10 +14,16 @@ def get_config():
     config_data = {
         "ngon_ngu_mac_dinh": Config.ngon_ngu_mac_dinh,
         "thong_tin_tieu_de": Config.thong_tin_tieu_de.copy(),
-        "lua_chon_admin": Config.lua_chon_admin
+        "lua_chon_admin": Config.lua_chon_admin,
+        "thanh_tim_kiem": Config.thanh_tim_kiem,
+        "danh_sach_dia_chi_lua_chon": Config.danh_sach_dia_chi_lua_chon,
+        "slogan": Config.slogan,
+        "cac_lua_chon": Config.cac_lua_chon
     }
     # Chỉnh sửa path logo để web có thể truy cập được
     config_data["thong_tin_tieu_de"]["path_logo"] = "/static/logo.png"
+    config_data["path_hinh_nen"] = "/static/nen_bat_dong_san.jpg"
+    config_data["path_avatar"] = "/static/avatar_slogan.png"
     return jsonify(config_data)
 
 if __name__ == '__main__':

@@ -2,65 +2,30 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Bất Động Sản Chuyên Nghiệp</title>
+    <title>Ngọc xinh gái</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { margin: 0; font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #333; }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #ffffff;
-            padding: 0 40px;
-            height: 72px;
-            box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        .nav-left { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.4rem; color: #e03c31; cursor: pointer; }
-        .nav-left img { height: 45px; }
-        .nav-center { display: flex; gap: 30px; }
-        .nav-center a { 
-            text-decoration: none; 
-            color: #222; 
-            font-weight: 500; 
-            font-size: 15px;
-            transition: 0.2s; 
-            padding: 8px 4px;
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-        }
-        .nav-center a:hover { color: #e03c31; border-bottom: 2px solid #e03c31; }
-        .nav-right { display: flex; gap: 15px; align-items: center; }
-        .dropdown { position: relative; display: inline-block; }
-        .dropbtn { background: transparent; border: 1px solid #ddd; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; color: #444; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-        .dropbtn:hover { background: #f8f9fa; border-color: #999; }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: #ffffff;
-            min-width: 160px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 5px;
-        }
-        .dropdown-content a { color: #333; padding: 10px 16px; text-decoration: none; display: block; font-size: 14px; transition: 0.2s; }
-        .dropdown-content a:hover { background-color: #f1f3f5; color: #e03c31; }
-        .dropdown:hover .dropdown-content { display: block; }
-        .container { padding: 40px; text-align: center; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <nav id="main-nav" class="navbar"></nav>
 
+    <div id="hero-section" class="hero">
+        <div class="hero-content">
+            <div id="search-bar" class="search-container"></div>
+        </div>
+    </div>
+
+    <div class="main-content-wrapper">
+        <div id="slogan-container" class="slogan-side"></div>
+        <div class="filter-side">
+            <div id="filter-options" class="filter-tags"></div>
+            <div id="property-list" class="property-grid"></div>
+            <div id="pagination" class="pagination"></div>
+        </div>
+    </div>
+
     <div class="container">
-        <h1 id="main-text">Đang tải nội dung...</h1>
-        <p id="sub-text"></p>
     </div>
 
     <script src="{{ url_for('static', filename='js/content.js') }}"></script>
