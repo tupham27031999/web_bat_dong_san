@@ -11,7 +11,7 @@ path_logo = os.path.join(PATH_PHAN_MEM, "static", "logo.png")
 
 
 class Config:
-    ngon_ngu_mac_dinh = "JP" # ngôn ngữ mặc định khi mở phần mềm
+    ngon_ngu_mac_dinh = "EN" # ngôn ngữ mặc định khi mở phần mềm
     thong_tin_tieu_de = {"path_logo": path_logo,
                          "tieu_de_ten_web": {"VI": "bất động sản 1", "EN": "real estate 1", "JP": "不動産 1"},
                          "thue": {"VI": "Thuê", "EN": "Rent", "JP": "アルバイト"},
