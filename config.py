@@ -1,10 +1,5 @@
 # config.py
 import os
-import json
-import numpy as np
-import cv2
-import math
-import socket
 
 def edit_path(input):
     return input.replace("\\", "/")
