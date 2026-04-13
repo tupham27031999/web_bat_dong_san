@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify
 from config import Config
+import config as cfg
 
 app = Flask(__name__)
 
@@ -18,12 +19,13 @@ def get_config():
         "thanh_tim_kiem": Config.thanh_tim_kiem,
         "danh_sach_dia_chi_lua_chon": Config.danh_sach_dia_chi_lua_chon,
         "slogan": Config.slogan,
-        "cac_lua_chon": Config.cac_lua_chon
+        "cac_lua_chon": Config.cac_lua_chon,
+        "slogan_tim_kiem": Config.slogan_tim_kiem
     }
     # Chỉnh sửa path logo để web có thể truy cập được
-    config_data["thong_tin_tieu_de"]["path_logo"] = "/static/logo.png"
-    config_data["path_hinh_nen"] = "/static/nen_bat_dong_san.jpg"
-    config_data["path_avatar"] = "/static/avatar_slogan.png"
+    config_data["thong_tin_tieu_de"]["path_logo"] = cfg.path_logo
+    config_data["path_hinh_nen"] = cfg.path_hinh_nen
+    config_data["path_avatar"] = cfg.path_avatar
     return jsonify(config_data)
 
 if __name__ == '__main__':

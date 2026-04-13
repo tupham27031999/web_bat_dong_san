@@ -6,8 +6,9 @@ def edit_path(input):
 
 
 PATH_PHAN_MEM = edit_path(os.path.dirname(os.path.realpath(__file__)))
-path_logo = os.path.join(PATH_PHAN_MEM, "static", "logo.png")
-path_avatar = os.path.join(PATH_PHAN_MEM, "static", "slogan.webp")
+path_logo = "/static/logo.PNG"
+path_hinh_nen = "/static/nen_bat_dong_san.jpg"
+path_avatar = "/static/slogan.png"
 
 
 
@@ -27,7 +28,10 @@ class Config:
     lua_chon_admin = {"dang_nhap": {"VI": "Đăng nhập", "EN": "Login", "JP": "ログイン"},
                       "doi_mat_khau": {"VI": "Đổi mật khẩu", "EN": "Change password", "JP": "パスワードを変更"}}
     
-
+    # slogan trên thanh tìm kiếm 
+    slogan_tim_kiem = {"VI": "Giúp bạn tìm được ngôi nhà mơ ước tại Tokyo",
+                       "EN": "Helping You Find Your Home in Tokyo",
+                       "JP": "東京での住まい探しをお手伝いします"}
     # thanh tìm kiếm ở trung tâm của web
     danh_sach_dia_chi_lua_chon = ["SL1", "SL2", "SL3"]
     thanh_tim_kiem = {"dia_chi": {"VI": "Địa chỉ", "EN": "Address", "JP": "住所"},

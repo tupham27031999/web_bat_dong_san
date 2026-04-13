@@ -74,11 +74,14 @@ function renderNavbar() {
 function renderHero() {
     const heroSection = document.getElementById("hero-section");
     const searchBar = document.getElementById("search-bar");
+    const sloganMain = document.getElementById("hero-slogan-text");
     
     if (!configData) return;
 
     const search = configData.thanh_tim_kiem;
     const locations = configData.danh_sach_dia_chi_lua_chon;
+    
+    if (sloganMain) sloganMain.textContent = configData.slogan_tim_kiem[currentLang];
     
     heroSection.style.backgroundImage = `url('${configData.path_hinh_nen}')`;
     

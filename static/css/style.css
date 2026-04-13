@@ -16,17 +16,25 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--white); /* Đổi sang trắng đặc để khớp với nền logo */
     backdrop-filter: blur(10px);
     padding: 0 40px;
-    height: 72px;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.04);
+    height: 80px; /* Tăng nhẹ chiều cao để logo trông thoáng hơn */
+    border-bottom: 1px solid rgba(0,0,0,0.05); /* Thêm đường kẻ rất mờ để phân định */
+    box-shadow: 0 2px 15px rgba(0,0,0,0.03); /* Đổ bóng nhẹ nhàng hơn */
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 .nav-left { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.4rem; color: var(--primary-color); cursor: pointer; letter-spacing: -0.5px; }
-.nav-left img { height: 45px; }
+.nav-left img { 
+    height: 50px; 
+    padding: 5px 0; /* Tạo khoảng trống nhỏ xung quanh logo */
+    transition: transform 0.3s ease;
+}
+.nav-left:hover img {
+    transform: scale(1.05); /* Hiệu ứng phóng nhẹ logo khi di chuột vào */
+}
 .nav-center { display: flex; gap: 30px; }
 .nav-center a { 
     text-decoration: none;
@@ -151,6 +159,15 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
 
 .hero-content { position: relative; z-index: 1; width: 100%; max-width: 1100px; padding: 20px; }
 
+.hero-slogan-main {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    letter-spacing: -1px;
+    animation: fadeInUp 0.8s ease-out;
+}
+
 /* Filter & Slogan Section */
 .main-content-wrapper {
     display: flex;
@@ -187,8 +204,11 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
     align-self: center; /* Căn giữa theo chiều ngang */
     max-width: 100%; /* Đảm bảo ảnh không tràn ra ngoài */
     height: auto;
-    object-fit: contain; /* Giữ tỷ lệ ảnh */
+    object-fit: contain;
     margin-top: auto; /* Đẩy ảnh xuống cuối container */
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); /* Tạo bóng đổ thực tế cho vật thể trong suốt */
+    animation: floating 3s ease-in-out infinite; /* Hiệu ứng bay lơ lửng */
+    pointer-events: none; /* Tránh việc người dùng vô tình kéo ảnh */
 }
 
 .filter-side {
@@ -245,3 +265,14 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
     border: 1px solid #E6E8EC; cursor: pointer; font-weight: 600; transition: 0.3s;
 }
 .page-btn:hover, .page-btn.active { background: var(--primary-color); color: var(--white); border-color: var(--primary-color); }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
