@@ -92,10 +92,14 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
 
 /* Hero Section */
 .hero {
-    height: 550px;
+    min-height: 550px;
+    height: 80vh; /* Tăng chiều cao một chút để thấy được nhiều view cửa kính hơn */
     box-sizing: border-box; /* Giữ nguyên chiều cao 550px khi thêm padding */
+    background-color: #2c3e50; /* Màu nền dự phòng khi ảnh đang tải */
     background-size: cover;
     background-position: center;
+    background-attachment: fied; /* Tạo hiệu ứng cuộn nhẹ nếu ảnh đủ lớn */
+    background-repeat: no-repeat;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -103,13 +107,13 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
     position: relative;
     color: white;
     text-align: center;
-    padding-top: 200px; /* Tăng padding để đẩy nội dung xuống thấp hơn nữa */
+    padding-top: 370px; /* Tăng padding để đẩy nội dung xuống thấp hơn nữa */
 }
 .hero::before {
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6)); /* Làm tối nhẹ để nổi bật thanh tìm kiếm */
 }
 
 /* Search Bar Style */
