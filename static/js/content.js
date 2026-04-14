@@ -63,8 +63,8 @@ function renderNavbar() {
             <div class="dropdown">
                 <button class="dropbtn"><i class="fas fa-user-shield"></i> ${info.admin[currentLang]} <i class="fas fa-chevron-down"></i></button>
                 <div class="dropdown-content">
-                    <a href="#"><i class="fas fa-sign-in-alt"></i> ${admin.dang_nhap[currentLang]}</a>
-                    <a href="#"><i class="fas fa-lock"></i> ${admin.doi_mat_khau[currentLang]}</a>
+                    <a href="javascript:void(0)" onclick="showLoginModal()"><i class="fas fa-sign-in-alt"></i> ${admin.dang_nhap[currentLang]}</a>
+                    <a href="javascript:void(0)" onclick="showChangePasswordModal()"><i class="fas fa-lock"></i> ${admin.doi_mat_khau[currentLang]}</a>
                 </div>
             </div>
         </div>
@@ -286,6 +286,133 @@ window.changeLang = function(lang) {
     renderNavbar();
     renderHero();
     refreshMainUI();
+};
+
+window.showLoginModal = function() {
+    const modalContainer = document.getElementById("modal-container");
+    const lang = configData.admin_window;
+    const common = lang.chung;
+    const login = lang.dang_nhap;
+
+    modalContainer.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-lock"></i> ${login.tieu_de[currentLang]}</h2>
+            </div>
+            <div class="modal-body">
+                <div class="modal-input-group">
+                    <label>${login.tai_khoan[currentLang]}</label>
+                    <input type="text" id="admin-user" placeholder="...">
+                </div>
+                <div class="modal-input-group">
+                    <label>${login.mat_khau[currentLang]}</label>
+                    <input type="password" id="admin-pass" placeholder="••••••••">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-secondary" onclick="closeModal()">${common.nut_huy[currentLang]}</button>
+                <button class="btn-modal btn-modal-primary" onclick="handleLoginSubmit()">${login.nut_gui[currentLang]}</button>
+            </div>
+        </div>
+    `;
+    modalContainer.style.display = 'flex';
+};
+
+window.showChangePasswordModal = function() {
+    const modalContainer = document.getElementById("modal-container");
+    const lang = configData.admin_window;
+    const common = lang.chung;
+    const cp = lang.doi_mat_khau;
+
+    modalContainer.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-key"></i> ${cp.tieu_de[currentLang]}</h2>
+            </div>
+            <div class="modal-body">
+                <div class="modal-input-group">
+                    <label>${cp.mat_khau_cu[currentLang]}</label>
+                    <input type="password" id="old-pass">
+                </div>
+                <div class="modal-input-group">
+                    <label>${cp.mat_khau_moi[currentLang]}</label>
+                    <input type="password" id="new-pass">
+                </div>
+                <div class="modal-input-group">
+                    <label>${cp.xac_nhan[currentLang]}</label>
+                    <input type="password" id="confirm-pass">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-secondary" onclick="closeModal()">${common.nut_huy[currentLang]}</button>
+                <button class="btn-modal btn-modal-primary" onclick="handleChangePasswordSubmit()">${cp.nut_gui[currentLang]}</button>
+            </div>
+        </div>
+    `;
+    modalContainer.style.display = 'flex';
+};
+
+window.closeModal = function() {
+    document.getElementById("modal-container").style.display = 'none';
+};
+
+window.handleLoginSubmit = async function() {
+    const user = document.getElementById("admin-user").value;
+    const pass = document.getElementById("admin-pass").value;
+    const common = configData.admin_window.chung;
+
+    try {
+        const response = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: user, password: pass })
+        });
+        const data = await response.json();
+        if (data.success) {
+            window.location.href = '/admin-dashboard';
+        } else {
+            alert(common.thong_bao_sai[currentLang]);
+        }
+    } catch (error) {
+        console.error("Lỗi đăng nhập:", error);
+    }
+};
+
+window.handleChangePasswordSubmit = async function() {
+    const oldPass = document.getElementById("old-pass").value;
+    const newPass = document.getElementById("new-pass").value;
+    const confirmPass = document.getElementById("confirm-pass").value;
+    const common = configData.admin_window.chung;
+
+    if (newPass !== confirmPass) {
+        alert(currentLang === 'VI' ? "Mật khẩu xác nhận không khớp!" : "Password confirmation does not match!");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/admin/change-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ old_pass: oldPass, new_pass: newPass })
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert(common.thong_bao_dung[currentLang]);
+            closeModal();
+        } else {
+            alert(data.message || common.thong_bao_sai[currentLang]);
+        }
+    } catch (error) {
+        console.error("Lỗi đổi mật khẩu:", error);
+    }
+};
+
+// Đóng modal khi nhấn ra ngoài vùng content
+window.onclick = function(event) {
+    const modal = document.getElementById("modal-container");
+    if (event.target == modal) {
+        closeModal();
+    }
 };
 
 document.addEventListener("DOMContentLoaded", initApp);

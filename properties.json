@@ -1,0 +1,31 @@
+[
+    {
+        "ma_bds": "BDS2",
+        "ten_bds": {
+            "VI": "222",
+            "EN": "4444",
+            "JP": "3333"
+        },
+        "dia_chi": {
+            "VI": "3333",
+            "EN": "444",
+            "JP": "2222"
+        },
+        "phan_loai": "thue",
+        "dien_tich": "33",
+        "so_phong_ngu": "2",
+        "so_tang": "1",
+        "gia_jpy": "2121",
+        "tien_thue_thang": "121",
+        "gia_usd": "12121",
+        "gia_vnd": "2121",
+        "phi_quan_ly": "121",
+        "thu_nuoi": "yes",
+        "toa_do": "123",
+        "ga_tau_gan": {
+            "VI": "33",
+            "EN": "44",
+            "JP": "55"
+        }
+    }
+]

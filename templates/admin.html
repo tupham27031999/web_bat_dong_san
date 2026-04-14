@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Property Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="nav-left" style="color: white; cursor: default; margin-bottom: 20px;" id="cms-logo-area">
+                <img src="/static/logo.PNG" alt="Logo" style="height: 40px;">
+                <span id="label-cms-title">CMS Admin</span>
+            </div>
+            <nav style="display: flex; flex-direction: column; gap: 10px;" id="admin-nav">
+                <a href="javascript:void(0)" onclick="showSection('add')" id="nav-add" class="admin-nav-item active"><i class="fas fa-plus-circle"></i> <span id="label-them-bds">Thêm Bất Động Sản</span></a>
+                <a href="javascript:void(0)" onclick="showSection('list')" id="nav-list" class="admin-nav-item"><i class="fas fa-list"></i> <span id="label-danh-sach">Danh sách tin đăng</span></a>
+                <a href="/" class="admin-nav-item" style="margin-top: 50px;"><i class="fas fa-arrow-left"></i> <span id="label-quay-lai">Quay lại trang chủ</span></a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-main-header">
+                <div class="header-spacer"></div>
+                <h1 id="label-header-title">Đăng tin BĐS mới</h1>
+                <div class="header-actions">
+                    <div class="dropdown">
+                        <button class="dropbtn" id="admin-lang-btn"><i class="fas fa-globe"></i> English <i class="fas fa-chevron-down"></i></button>
+                        <div class="dropdown-content">
+                            <a href="javascript:void(0)" onclick="changeAdminLang('VI')">Tiếng Việt</a>
+                            <a href="javascript:void(0)" onclick="changeAdminLang('EN')">English</a>
+                            <a href="javascript:void(0)" onclick="changeAdminLang('JP')">日本語</a>
+                        </div>
+                    </div>
+                    <div class="admin-user-info">
+                        <i class="fas fa-circle-user"></i> <span id="label-admin-user">Quản trị viên</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Section Thêm/Sửa BĐS -->
+            <section id="section-form" class="admin-card">
+                <div id="property-form-container" class="admin-form-grid">
+                    <!-- Form sẽ được tự động tạo bởi admin.js -->
+                </div>
+                <div style="margin-top: 40px; display: flex; justify-content: flex-end; gap: 15px;">
+                    <button id="btn-reset" class="btn-modal btn-modal-secondary" style="max-width: 150px;" onclick="resetForm()">Làm mới</button>
+                    <button id="btn-save" class="btn-modal btn-modal-primary" style="max-width: 200px;" onclick="saveProperty()">Lưu thông tin</button>
+                </div>
+            </section>
+
+            <!-- Section Danh sách BĐS -->
+            <section id="section-list" class="admin-card" style="display: none;">
+                <div class="list-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div class="admin-search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="admin-search-input" placeholder="Tìm theo mã BĐS..." oninput="renderPropertyList()">
+                    </div>
+                </div>
+                <div id="property-table-container"></div>
+            </section>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

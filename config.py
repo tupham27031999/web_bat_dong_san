@@ -1,5 +1,6 @@
 # config.py
 import os
+import json
 
 def edit_path(input):
     return input.replace("\\", "/")
@@ -10,7 +11,26 @@ path_logo = "/static/logo.PNG"
 path_hinh_nen = "/static/nen_bat_dong_san.jpg"
 path_avatar = "/static/slogan.png"
 
+def load_admin_credentials():
+    admin_file = os.path.join(PATH_PHAN_MEM, "admin.json")
+    if os.path.exists(admin_file):
+        try:
+            with open(admin_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Lỗi khi đọc file admin.json: {e}")
+    # Giá trị mặc định nếu không tìm thấy file hoặc lỗi
+    return {"tai_khoan": "admin", "mat_khau": "123"}
 
+def load_properties():
+    properties_file = os.path.join(PATH_PHAN_MEM, "properties.json")
+    if os.path.exists(properties_file):
+        try:
+            with open(properties_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Lỗi khi đọc file properties.json: {e}")
+    return []
 
 
 class Config:
@@ -55,7 +75,113 @@ class Config:
                     "phong_gia_dinh": {"VI": "Phòng gia đình", "EN": "Family room", "JP": "ファミリールーム"},
                     "nha_rieng": {"VI": "Nhà riêng/Biệt lập", "EN": "Private house/Apartment", "JP": "プライベートハウス/アパートメント"},}
     
-                    
+    admin = load_admin_credentials()
+    admin_window = {
+        "dang_nhap": {
+            "tieu_de": {"VI": "Đăng Nhập Quản Trị", "EN": "Admin Login", "JP": "管理者ログイン"},
+            "tai_khoan": {"VI": "Tên đăng nhập", "EN": "Username", "JP": "ユーザー名"},
+            "mat_khau": {"VI": "Mật khẩu", "EN": "Password", "JP": "パスワード"},
+            "nut_gui": {"VI": "Đăng Nhập", "EN": "Sign In", "JP": "サインイン"},
+        },
+        "doi_mat_khau": {
+            "tieu_de": {"VI": "Đổi Mật Khẩu", "EN": "Change Password", "JP": "パスワード変更"},
+            "mat_khau_cu": {"VI": "Mật khẩu cũ", "EN": "Current Password", "JP": "現在のパスワード"},
+            "mat_khau_moi": {"VI": "Mật khẩu mới", "EN": "New Password", "JP": "新しいパスワード"},
+            "xac_nhan": {"VI": "Xác nhận mật khẩu", "EN": "Confirm Password", "JP": "パスワードの確認"},
+            "nut_gui": {"VI": "Cập Nhật", "EN": "Update", "JP": "更新"},
+        },
+        "chung": {
+            "nut_huy": {"VI": "Đóng", "EN": "Close", "JP": "閉じる"},
+            "thong_bao_sai": {"VI": "Thông tin không chính xác!", "EN": "Incorrect information!", "JP": "不正確な情報です！"},
+            "thong_bao_dung": {"VI": "Thao tác thành công!", "EN": "Success!", "JP": "成功しました！"},
+            "loi_trung_ma": {"VI": "Mã bất động sản đã tồn tại!", "EN": "Property ID already exists!", "JP": "物件IDは既に存在します！"},
+            "loi_gia_tri_am": {"VI": "Giá trị không được nhỏ hơn 0!", "EN": "Value cannot be less than 0!", "JP": "値は0未満にすることはできません！"}
+        }
+    }
 
+    # Biến cấu trúc cho form nhập liệu và hiển thị Bất động sản
+    thong_tin_bds_form = {
+        "ma_bds": {"label": {"VI": "Mã bất động sản", "EN": "Property ID", "JP": "物件ID"}},
+        "ten_bds": {"VI": "Tên bất động sản", "EN": "Property Name", "JP": "物件名"},
+        "dia_chi": {"VI": "Địa chỉ", "EN": "Address", "JP": "住所"},
+        "phan_loai": {
+            "label": {"VI": "Phân loại", "EN": "Category", "JP": "カテゴリー"},
+            "options": {
+                "thue": {"VI": "Cho thuê", "EN": "For Rent", "JP": "賃貸"},
+                "ban": {"VI": "Nhà bán", "EN": "For Sale", "JP": "販売"},
+                "dau_tu": {"VI": "Tòa nhà đầu tư", "EN": "Investment Building", "JP": "投資用ビル"}
+            }
+        },
+        "dien_tich": {"label": {"VI": "Diện tích (m2)", "EN": "Area (sqm)", "JP": "面積 (m2)"}},
+        "so_phong_ngu": {"label": {"VI": "Số phòng ngủ", "EN": "Bedrooms", "JP": "寝室数"}},
+        "so_tang": {"label": {"VI": "Số tầng", "EN": "Number of floors", "JP": "階数"}},
+        "gia_jpy": {"label": {"VI": "Giá JPY", "EN": "Price JPY", "JP": "価格 JPY"}},
+        "tien_thue_thang": {"label": {"VI": "Tiền nhà hàng tháng (Cho thuê)", "EN": "Monthly Rent", "JP": "月額賃料"}},
+        "gia_usd": {"label": {"VI": "Giá USD", "EN": "Price USD", "JP": "価格 USD"}},
+        "gia_vnd": {"label": {"VI": "Giá VNĐ", "EN": "Price VND", "JP": "価格 VND"}},
+        "phi_quan_ly": {"label": {"VI": "Phí quản lý (nếu có)", "EN": "Management fee", "JP": "管理費"}},
+        "thu_nuoi": {
+            "label": {"VI": "Cho phép thú nuôi", "EN": "Pets allowed", "JP": "ペット可"},
+            "options": {
+                "yes": {"VI": "Có", "EN": "Yes", "JP": "はい"},
+                "no": {"VI": "Không", "EN": "No", "JP": "いいえ"}
+            }
+        },
+        "toa_do": {"label": {"VI": "Vị trí (tọa độ)", "EN": "Location (coordinates)", "JP": "位置 (座標)"}},
+        "ga_tau_gan": {"VI": "Các ga tàu gần", "EN": "Nearby stations", "JP": "最寄り駅"}
+    }
 
-    
+    danh_sach_bds = load_properties() # Tải dữ liệu từ file khi khởi động
+    temp_property_data = {} # Biến để lưu giá trị sau khi người dùng nhập
+
+    admin_dashboard_labels = {
+        "sidebar": {
+            "cms_title": {"VI": "CMS Quản trị", "EN": "CMS Admin", "JP": "CMS管理"},
+            "them_bds": {"VI": "Thêm Bất Động Sản", "EN": "Add Property", "JP": "物件追加"},
+            "danh_sach": {"VI": "Danh sách tin đăng", "EN": "Property List", "JP": "物件一覧"},
+            "quay_lai": {"VI": "Quay lại trang chủ", "EN": "Back to Home", "JP": "ホームに戻る"}
+        },
+        "header": {
+            "tieu_de_dang_tin": {"VI": "Đăng tin BĐS mới", "EN": "Post New Property", "JP": "新規物件投稿"},
+            "tieu_de_danh_sach": {"VI": "Danh sách bất động sản", "EN": "Property List", "JP": "物件一覧"},
+            "tieu_de_chinh_sua": {"VI": "Chỉnh sửa BĐS", "EN": "Edit Property", "JP": "物件の編集"},
+            "nguoi_dung": {"VI": "Quản trị viên", "EN": "Administrator", "JP": "管理者"}
+        },
+        "buttons": {
+            "lam_moi": {"VI": "Làm mới", "EN": "Reset", "JP": "リセット"},
+            "luu": {"VI": "Lưu thông tin", "EN": "Save Information", "JP": "情報を保存"}
+        }
+    }
+
+    thong_tin_danh_sach_BDS = {
+        "ma_bds": {"VI": "Mã BĐS", "EN": "Property ID", "JP": "物件ID"},
+        "ten_bds": {"VI": "Tên BĐS", "EN": "Property Name", "JP": "物件名"},
+        "dia_chi": {"VI": "Địa chỉ", "EN": "Address", "JP": "住所"},
+        "gia": {"VI": "Giá (JPY)", "EN": "Price (JPY)", "JP": "価格 (JPY)"},
+        "thao_tac": {"VI": "Thao tác", "EN": "Actions", "JP": "操作"},
+        "placeholder_tim_kiem": {"VI": "Tìm theo mã BĐS...", "EN": "Search by ID...", "JP": "IDで検索..."}
+    }
+
+    @staticmethod
+    def save_admin(new_data):
+        admin_file = os.path.join(PATH_PHAN_MEM, "admin.json")
+        try:
+            with open(admin_file, 'w', encoding='utf-8') as f:
+                json.dump(new_data, f, ensure_ascii=False, indent=4)
+            Config.admin = new_data # Cập nhật lại biến trong bộ nhớ
+            return True
+        except Exception as e:
+            print(f"Lỗi khi lưu admin.json: {e}")
+            return False
+
+    @staticmethod
+    def save_properties(data):
+        properties_file = os.path.join(PATH_PHAN_MEM, "properties.json")
+        try:
+            with open(properties_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+            Config.danh_sach_bds = data # Cập nhật lại biến trong bộ nhớ
+            return True
+        except Exception as e:
+            print(f"Lỗi khi lưu properties.json: {e}")
+            return False
