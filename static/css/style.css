@@ -16,17 +16,17 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--white); /* Đổi sang trắng đặc để khớp với nền logo */
+    background-color: #011D41; /* Đổi sang màu Navy */
     backdrop-filter: blur(10px);
     padding: 0 40px;
     height: 80px; /* Tăng nhẹ chiều cao để logo trông thoáng hơn */
-    border-bottom: 1px solid rgba(0,0,0,0.05); /* Thêm đường kẻ rất mờ để phân định */
-    box-shadow: 0 2px 15px rgba(0,0,0,0.03); /* Đổ bóng nhẹ nhàng hơn */
+    border-bottom: 1px solid rgba(255,255,255,0.1); /* Đường kẻ mờ màu trắng cho nền tối */
+    box-shadow: 0 2px 15px rgba(0,0,0,0.2); /* Đổ bóng đậm hơn một chút để nổi bật */
     position: sticky;
     top: 0;
     z-index: 1000;
 }
-.nav-left { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.4rem; color: var(--primary-color); cursor: pointer; letter-spacing: -0.5px; }
+.nav-left { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.4rem; color: var(--white); cursor: pointer; letter-spacing: -0.5px; }
 .nav-left img { 
     height: 50px; 
     padding: 5px 0; /* Tạo khoảng trống nhỏ xung quanh logo */
@@ -38,7 +38,7 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
 .nav-center { display: flex; gap: 30px; }
 .nav-center a { 
     text-decoration: none;
-    color: var(--text-main);
+    color: var(--white); /* Chữ màu trắng */
     font-weight: 500; 
     font-size: 15px;
     transition: 0.2s; 
@@ -48,15 +48,15 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
     gap: 6px;
     border-bottom: 2px solid transparent; /* Thêm border trong suốt để giữ chiều cao */
 }
-.nav-center a:hover { color: var(--primary-color); border-bottom: 2px solid var(--primary-color); }
+.nav-center a:hover { color: #60EFFF; border-bottom: 2px solid #60EFFF; } /* Màu sáng hơn khi hover trên nền tối */
 .nav-center a.active-property-type {
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
+    color: #60EFFF;
+    border-bottom: 2px solid #60EFFF;
 }
 .nav-right { display: flex; gap: 15px; align-items: center; }
 .dropdown { position: relative; display: inline-block; }
-.dropbtn { background: var(--white); border: 1px solid #E6E8EC; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-.dropbtn:hover { border-color: var(--primary-color); box-shadow: var(--shadow); }
+.dropbtn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--white); display: flex; align-items: center; gap: 8px; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+.dropbtn:hover { border-color: #60EFFF; background: rgba(255,255,255,0.2); }
 
 .dropdown-content {
     opacity: 0;
@@ -438,3 +438,49 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
     align-items: center;
     gap: 8px;
 }
+
+.admin-main-header .dropbtn {
+    background: var(--white);
+    border: 1px solid #E6E8EC;
+    color: var(--text-main);
+}
+
+.admin-main-header .dropbtn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: var(--white);
+}
+
+/* Image Upload Styling */
+.image-upload-wrapper {
+    border: 2px dashed #E6E8EC;
+    padding: 20px;
+    border-radius: 16px;
+    background: #FAFBFF;
+}
+.image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+.image-preview-item {
+    position: relative;
+    height: 100px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+.remove-img-btn {
+    position: absolute; top: 5px; right: 5px;
+    background: rgba(255, 77, 77, 0.9); color: white;
+    border: none; border-radius: 50%; width: 24px; height: 24px;
+    cursor: pointer; font-size: 12px;
+}
+.image-upload-btn {
+    display: inline-block; padding: 10px 20px; background: var(--white);
+    border: 1px solid #E6E8EC; border-radius: 10px; cursor: pointer;
+    font-weight: 600; font-size: 14px; transition: 0.3s;
+}
+.image-upload-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }

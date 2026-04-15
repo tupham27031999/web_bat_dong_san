@@ -27,5 +27,35 @@
             "EN": "44",
             "JP": "55"
         }
+    },
+    {
+        "ma_bds": "BDS110",
+        "ten_bds": {
+            "VI": "eef",
+            "EN": "eee",
+            "JP": "rcc"
+        },
+        "dia_chi": {
+            "VI": "dd",
+            "EN": "ccc",
+            "JP": "ccc"
+        },
+        "phan_loai": "thue",
+        "dien_tich": "887",
+        "so_phong_ngu": "6",
+        "so_tang": "8",
+        "gia_jpy": "787898",
+        "tien_thue_thang": "77",
+        "gia_usd": "878787",
+        "gia_vnd": "7677",
+        "phi_quan_ly": "76",
+        "thu_nuoi": "yes",
+        "toa_do": "776",
+        "ga_tau_gan": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "anh_bds": []
     }
 ]

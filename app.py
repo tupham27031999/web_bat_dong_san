@@ -1,12 +1,32 @@
 from flask import Flask, render_template, jsonify, request
 from config import Config
 import config as cfg
+import os
+import uuid
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
 # Vô hiệu hóa việc tự động sắp xếp các phím JSON theo bảng chữ cái
 # Điều này giúp giữ nguyên thứ tự các trường như đã định nghĩa trong config.py
 app.json.sort_keys = False
+
+UPLOAD_FOLDER = os.path.join(cfg.PATH_PHAN_MEM, 'static/uploads/properties')
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+def delete_physical_images(image_list):
+    """Xóa các file ảnh vật lý khỏi thư mục upload."""
+    if not image_list:
+        return
+    for url in image_list:
+        try:
+            filename = os.path.basename(url)
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(f"Lỗi khi xóa file {url}: {e}")
 
 @app.route('/')
 def index():
@@ -61,6 +81,33 @@ def change_password():
             
     return jsonify({"success": False, "message": "Mật khẩu cũ không chính xác"})
 
+@app.route('/api/admin/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({"success": False, "message": "No file part"})
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"success": False, "message": "No selected file"})
+    
+    if file:
+        filename = secure_filename(file.filename)
+        unique_filename = f"{uuid.uuid4().hex}_{filename}"
+        file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+        file.save(file_path)
+        return jsonify({"success": True, "url": f"/static/uploads/properties/{unique_filename}"})
+
+@app.route('/api/admin/delete-file', methods=['POST'])
+def delete_file():
+    """API để xóa nhanh một file ảnh (dùng cho ảnh vừa upload nhưng bị xóa ngay)."""
+    try:
+        url = request.json.get('url')
+        if url:
+            delete_physical_images([url])
+            return jsonify({"success": True})
+    except Exception as e:
+        print(e)
+    return jsonify({"success": False})
+
 @app.route('/admin-dashboard')
 def admin_dashboard():
     return render_template('admin.html')
@@ -92,6 +139,12 @@ def delete_property():
     try:
         ma_bds = request.json.get('ma_bds')
         current_list = Config.danh_sach_bds
+        
+        # Tìm và xóa ảnh vật lý của BĐS trước khi xóa khỏi danh sách
+        prop_to_delete = next((p for p in current_list if p.get('ma_bds') == ma_bds), None)
+        if prop_to_delete:
+            delete_physical_images(prop_to_delete.get('anh_bds', []))
+
         new_list = [p for p in current_list if p.get('ma_bds') != ma_bds]
         
         if Config.save_properties(new_list):
@@ -107,15 +160,19 @@ def update_property():
         ma_bds = updated_prop.get('ma_bds')
         current_list = Config.danh_sach_bds
         
-        found = False
         for i, p in enumerate(current_list):
             if p.get('ma_bds') == ma_bds:
+                # So sánh ảnh cũ và mới để xóa các file không còn dùng
+                old_images = set(p.get('anh_bds', []))
+                new_images = set(updated_prop.get('anh_bds', []))
+                removed_images = old_images - new_images
+                delete_physical_images(list(removed_images))
+                
                 current_list[i] = updated_prop
-                found = True
+                if Config.save_properties(current_list):
+                    return jsonify({"success": True})
                 break
-        
-        if found and Config.save_properties(current_list):
-            return jsonify({"success": True})
+
         return jsonify({"success": False, "message": "Property not found or save failed"})
     except Exception as e:
         return jsonify({"success": False, "message": str(e)})

@@ -1,6 +1,8 @@
 let configData = null;
 let currentLang = 'EN';
 let isEditing = false;
+let uploadedImages = [];
+let originalImages = []; // Lưu danh sách ảnh gốc khi bắt đầu sửa
 
 async function initAdmin() {
     try {
@@ -84,7 +86,7 @@ function renderForm() {
     for (const key in formConfig) {
         const field = formConfig[key];
         // Mã BĐS, Tên, Địa chỉ và Ga tàu sẽ chiếm trọn dòng để dễ nhập liệu
-        const isFullWidth = ['ma_bds', 'ten_bds', 'dia_chi', 'ga_tau_gan'].includes(key);
+        const isFullWidth = ['ma_bds', 'ten_bds', 'dia_chi', 'ga_tau_gan', 'anh_bds'].includes(key);
         const colClass = isFullWidth ? 'full-width' : '';
 
         html += `<div class="admin-input-group ${colClass}">`;
@@ -105,6 +107,18 @@ function renderForm() {
             }
             html += `</select>`;
         }
+        // Nếu là trường Ảnh
+        else if (key === 'anh_bds') {
+            html += `
+                <label>${field.label[currentLang]}</label>
+                <div class="image-upload-wrapper">
+                    <div id="image-preview-container" class="image-preview-grid"></div>
+                    <label class="image-upload-btn">
+                        <input type="file" multiple accept="image/*" onchange="handleImageUpload(event)" style="display:none">
+                        <i class="fas fa-cloud-upload-alt"></i> ${currentLang === 'VI' ? 'Tải ảnh lên' : 'Upload Images'}
+                    </label>
+                </div>`;
+        }
         // Các trường đơn lẻ khác
         else {
             const labelText = field.label ? field.label[currentLang] : (field[currentLang] || key);
@@ -116,6 +130,53 @@ function renderForm() {
         html += `</div>`;
     }
     container.innerHTML = html;
+    renderImagePreviews();
+}
+
+window.handleImageUpload = async function(event) {
+    const files = event.target.files;
+    for (let file of files) {
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const response = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+            const result = await response.json();
+            if (result.success) {
+                uploadedImages.push(result.url);
+                renderImagePreviews();
+            }
+        } catch (e) { console.error("Upload error:", e); }
+    }
+}
+
+function renderImagePreviews() {
+    const container = document.getElementById('image-preview-container');
+    if (!container) return;
+    container.innerHTML = uploadedImages.map((url, index) => `
+        <div class="image-preview-item">
+            <img src="${url}">
+            <button class="remove-img-btn" onclick="removeImage(${index})"><i class="fas fa-times"></i></button>
+        </div>
+    `).join('');
+}
+
+window.removeImage = async function(index) {
+    const urlToRemove = uploadedImages[index];
+    
+    // Nếu ảnh bị xóa KHÔNG nằm trong danh sách gốc (tức là ảnh vừa mới upload)
+    // thì xóa vật lý ngay lập tức để tránh rác bộ nhớ
+    if (!originalImages.includes(urlToRemove)) {
+        try {
+            await fetch('/api/admin/delete-file', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: urlToRemove })
+            });
+        } catch (e) { console.error("Lỗi xóa file tạm:", e); }
+    }
+
+    uploadedImages.splice(index, 1);
+    renderImagePreviews();
 }
 
 window.changeAdminLang = function(lang) {
@@ -199,20 +260,26 @@ window.editProperty = function(ma_bds) {
 
     isEditing = true;
     showSection('add');
+    uploadedImages = prop.anh_bds || [];
+    originalImages = [...uploadedImages]; // Copy danh sách ảnh gốc
 
     updateHeaderTitle();
 
     const formConfig = configData.thong_tin_bds_form;
     for (const key in formConfig) {
+        if (key === 'anh_bds') continue; // Bỏ qua vì ảnh được xử lý qua biến uploadedImages
+
         const field = formConfig[key];
         if (field.VI && field.EN && field.JP && !field.label) {
-            document.getElementById(`${key}_VI`).value = prop[key].VI;
-            document.getElementById(`${key}_EN`).value = prop[key].EN;
-            document.getElementById(`${key}_JP`).value = prop[key].JP;
+            if (document.getElementById(`${key}_VI`)) document.getElementById(`${key}_VI`).value = prop[key]?.VI || '';
+            if (document.getElementById(`${key}_EN`)) document.getElementById(`${key}_EN`).value = prop[key]?.EN || '';
+            if (document.getElementById(`${key}_JP`)) document.getElementById(`${key}_JP`).value = prop[key]?.JP || '';
         } else {
-            document.getElementById(key).value = prop[key];
+            const el = document.getElementById(key);
+            if (el) el.value = prop[key] || '';
         }
     }
+    renderImagePreviews();
     // Disable việc sửa mã BĐS khi đang edit
     document.getElementById('ma_bds').disabled = true;
     document.getElementById('ma_bds').style.opacity = '0.6';
@@ -220,6 +287,8 @@ window.editProperty = function(ma_bds) {
 
 window.resetForm = function() {
     isEditing = false;
+    uploadedImages = [];
+    originalImages = [];
     location.reload();
 }
 
@@ -227,22 +296,26 @@ window.saveProperty = async function() {
     const formConfig = configData.thong_tin_bds_form;
     const propertyData = {};
     for (const key in formConfig) {
+        if (key === 'anh_bds') continue; // Bỏ qua trường ảnh vì được xử lý riêng bên dưới
+
         const field = formConfig[key];
         
         // Nếu là trường đa ngôn ngữ (VI, EN, JP)
         if (field.VI && field.EN && field.JP && !field.label) {
             propertyData[key] = {
-                VI: document.getElementById(`${key}_VI`).value,
-                EN: document.getElementById(`${key}_EN`).value,
-                JP: document.getElementById(`${key}_JP`).value
+                VI: document.getElementById(`${key}_VI`)?.value || '',
+                EN: document.getElementById(`${key}_EN`)?.value || '',
+                JP: document.getElementById(`${key}_JP`)?.value || ''
             };
         } 
         // Nếu là trường đơn (ID, Giá, Diện tích, Select...)
         else {
             const el = document.getElementById(key);
-            propertyData[key] = el.value;
+            if (el) propertyData[key] = el.value;
         }
     }
+    // Thêm danh sách ảnh vào dữ liệu
+    propertyData['anh_bds'] = uploadedImages;
 
     // Kiểm tra giá trị âm cho các trường số (nếu có nhập)
     const numericFields = ['dien_tich', 'so_phong_ngu', 'so_tang', 'gia_jpy', 'tien_thue_thang', 'gia_usd', 'gia_vnd', 'phi_quan_ly'];

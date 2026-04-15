@@ -36,7 +36,7 @@ def load_properties():
 class Config:
     ngon_ngu_mac_dinh = "EN" # ngôn ngữ mặc định khi mở phần mềm
     thong_tin_tieu_de = {"path_logo": path_logo,
-                         "tieu_de_ten_web": {"VI": "Bất Động Sản", "EN": "Real Estate", "JP": "不動産"},
+                         "tieu_de_ten_web": {"VI": "Housing.jp", "EN": "Housing.jp", "JP": "Housing.jp"},
                          "thue": {"VI": "Thuê", "EN": "Rent", "JP": "賃貸"},
                          "mua": {"VI": "Mua", "EN": "Buy", "JP": "購入"},
                          "blog": {"VI": "Tin tức", "EN": "Blog", "JP": "ブログ"},
@@ -128,7 +128,8 @@ class Config:
             }
         },
         "toa_do": {"label": {"VI": "Vị trí (tọa độ)", "EN": "Location (coordinates)", "JP": "位置 (座標)"}},
-        "ga_tau_gan": {"VI": "Các ga tàu gần", "EN": "Nearby stations", "JP": "最寄り駅"}
+        "ga_tau_gan": {"VI": "Các ga tàu gần", "EN": "Nearby stations", "JP": "最寄り駅"},
+        "anh_bds": {"label": {"VI": "Hình ảnh bất động sản", "EN": "Property Images", "JP": "物件の画像"}}
     }
 
     danh_sach_bds = load_properties() # Tải dữ liệu từ file khi khởi động
