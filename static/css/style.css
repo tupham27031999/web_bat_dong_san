@@ -177,27 +177,24 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
 }
 
 /* Filter & Slogan Section */
-.main-content-wrapper {
+#main-content-wrapper {
     display: flex;
     flex-direction: column;
-    max-width: 1400px;
-    margin: -80px auto 100px; /* Hiệu ứng đè nhẹ lên Hero section */
-    gap: 100px; 
+    max-width: 1400px; /* Tăng chiều rộng để khung gần mép web hơn */
+    margin: 40px auto; /* Giảm lề trên dưới */
+    gap: 15px; /* Giảm khoảng cách mặc định giữa các thành phần con */
     padding: 0 20px;
-    position: relative;
-    z-index: 10;
 }
 
 .section-main-title {
     font-size: 2.5rem;
     font-weight: 900;
-    color: #011D41; /* Màu Navy đậm để nổi bật trên nền sáng và chuyển tiếp từ Hero */
-    margin-bottom: 25px;
+    color: var(--text-main);
+    margin-bottom: 10px; /* Giảm khoảng cách dưới tiêu đề để sát với khung nội dung */
     width: 100%;
     display: flex;
-    align-items: center; justify-content: center;
+    align-items: center;
     gap: 20px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.05);
     letter-spacing: -1px;
 }
 
@@ -227,22 +224,27 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
     text-shadow: 0 0 15px rgba(0, 208, 132, 0.3);
 }
 
+/* Tạo khoảng cách riêng giữa khối Mua và khối Thuê phía trên */
+#buy-title {
+    margin-top: 60px;
+}
+
 .main-content-section { /* Each individual rent/buy section */
     display: flex;
     gap: 30px;
     align-items: flex-start;
     width: 100%;
-    background: var(--white);
-    padding: 40px;
-    border-radius: 32px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.03);
-    box-sizing: border-box;
-    border: 1px solid #F0F2F5;
+    background: var(--white); /* Tạo nền trắng cho khung */
+    padding: 35px; /* Khoảng cách từ nội dung đến mép khung - giúp hết sát lề */
+    border-radius: 24px; /* Bo góc mềm mại */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.02); /* Đổ bóng cực nhẹ để tạo chiều sâu */
+    border: 1px solid #EDF2F7; /* Đường viền mảnh để định hình khung */
+    box-sizing: border-box; /* Đảm bảo padding không làm tăng chiều rộng khung */
 }
 
 .slogan-side {
-    flex: 0 0 280px; /* Cố định chiều rộng khung slogan bé lại */
-    background: #FAFBFF;
+    flex: 0 0 300px; /* Thu nhỏ nhẹ slogan side để nhường chỗ cho padding của khung */
+    background: #F8FAFC; /* Nền xám xanh cực nhạt để phân biệt với nền trắng của khung */
     padding: 25px;
     border-radius: var(--radius);
     border: 1px solid #E6E8EC;

@@ -226,7 +226,7 @@ window.handleSearch = function() {
     currentRentPage = 1;
     currentBuyPage = 1;
     refreshMainUI();
-    window.scrollTo({ top: document.querySelector('.main-content-wrapper').offsetTop - 100, behavior: 'smooth' });
+    window.scrollTo({ top: document.getElementById('main-content-wrapper').offsetTop - 100, behavior: 'smooth' });
 };
 
 window.scrollToSection = function(type) {
@@ -368,7 +368,8 @@ function renderPropertiesForType(type) {
     
     const itemsPerPage = 6;
     const totalItems = filtered.length;
-    const startIndex = (currentPage - 1) * itemsPerPage;
+    const page = type === 'Rent' ? currentRentPage : currentBuyPage;
+    const startIndex = (page - 1) * itemsPerPage;
     const paginatedItems = filtered.slice(startIndex, startIndex + itemsPerPage);
 
     if (totalItems === 0) {
@@ -407,11 +408,11 @@ function renderPropertiesForType(type) {
     `).join('');
 
     // Render Pagination
-    const totalPages = Math.ceil(filtered.length / itemsPerPage); // Use filtered.length here
-    paginationContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
-        <div class="page-btn ${page === currentPage ? 'active' : ''}" 
-             onclick="changePageForType('${type}', ${page})">
-            ${page}
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    paginationContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNo => `
+        <div class="page-btn ${pageNo === page ? 'active' : ''}" 
+             onclick="changePageForType('${type}', ${pageNo})">
+            ${pageNo}
         </div>
     `).join('');
 

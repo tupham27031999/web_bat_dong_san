@@ -157,5 +157,105 @@
         "anh_bds": [
             "/static/uploads/properties/9c31d1dbf51247ecb1091867d46cc373_bb1.jpeg"
         ]
+    },
+    {
+        "ma_bds": "BDS5",
+        "ten_bds": {
+            "VI": "gg",
+            "EN": "rgrg",
+            "JP": "grg"
+        },
+        "ma_buu_dien": "",
+        "tinh_thanh": {
+            "VI": "Rgrg",
+            "EN": "Rg",
+            "JP": "Grgr"
+        },
+        "quan_huyen": {
+            "VI": "Rgrgr",
+            "EN": "Grg",
+            "JP": "Rgrg"
+        },
+        "dia_chi_chi_tiet": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "mo_ta": {
+            "VI": "grgrgr",
+            "EN": "grgrg",
+            "JP": "rgrgrgr"
+        },
+        "phan_loai": "thue",
+        "dien_tich": "44",
+        "so_phong_ngu": "2",
+        "so_tang": "3",
+        "gia_jpy": "3434",
+        "tien_thue_thang": "3434",
+        "gia_usd": "3434",
+        "gia_vnd": "44",
+        "phi_quan_ly": "",
+        "phong_don": "no",
+        "phong_gia_dinh": "no",
+        "nha_rieng": "no",
+        "thu_nuoi": "no",
+        "toa_do": "",
+        "ga_tau_gan": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "anh_bds": [
+            "/static/uploads/properties/7ce2e669bb0f4ce086ff93cd730fbe42_bb1.jpeg"
+        ]
+    },
+    {
+        "ma_bds": "BDS6",
+        "ten_bds": {
+            "VI": "grg",
+            "EN": "rgr",
+            "JP": "grgr"
+        },
+        "ma_buu_dien": "",
+        "tinh_thanh": {
+            "VI": "Grg",
+            "EN": "Rgrg",
+            "JP": "Rgrg"
+        },
+        "quan_huyen": {
+            "VI": "Grg",
+            "EN": "Grg",
+            "JP": "Rgrg"
+        },
+        "dia_chi_chi_tiet": {
+            "VI": "66",
+            "EN": "66",
+            "JP": "66"
+        },
+        "mo_ta": {
+            "VI": "grgrg",
+            "EN": "rgrgrg",
+            "JP": "rgrgr"
+        },
+        "phan_loai": "thue",
+        "dien_tich": "43",
+        "so_phong_ngu": "4",
+        "so_tang": "4",
+        "gia_jpy": "343",
+        "tien_thue_thang": "3434",
+        "gia_usd": "3434",
+        "gia_vnd": "4",
+        "phi_quan_ly": "",
+        "phong_don": "no",
+        "phong_gia_dinh": "yes",
+        "nha_rieng": "yes",
+        "thu_nuoi": "yes",
+        "toa_do": "",
+        "ga_tau_gan": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "anh_bds": []
     }
 ]
