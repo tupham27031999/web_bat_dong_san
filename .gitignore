@@ -1,10 +1,10 @@
 # Dữ liệu web (Quan trọng để không bị lỗi pull)
-# properties.json
-# admin.json
-# footer.json
+properties.json
+admin.json
+footer.json
 
 # Thư mục chứa ảnh upload
-# static/uploads/properties/*
+static/uploads/properties/*
 
 # File rác hệ thống Python
 __pycache__/
