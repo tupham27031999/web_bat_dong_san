@@ -1,0 +1,40 @@
+
+cd ~
+rm -rf ~/web_bat_dong_san
+git clone https://github.com/tupham27031999/web_bat_dong_san.git
+cd web_bat_dong_san
+mkdir -p static/uploads/properties
+workon myenv
+pip install flask werkzeug gunicorn
+
+
+
+
+
+git add .gitignore
+git commit -m "Add gitignore to prevent json conflicts"
+git push origin main
+
+
+
+
+
+# 1. Ngừng theo dõi file (nhưng không xóa file thật trong máy)
+git rm --cached properties.json
+
+# 2. Lưu lại thay đổi này
+git commit -m "Ngung theo doi file properties.json"
+
+# 3. Đẩy thay đổi này lên GitHub
+git push origin main
+
+
+
+
+
+
+
+
+cd ~/web_bat_dong_san
+git pull
+# (Nếu có cài thêm thư viện mới thì gõ thêm: pip install -r requirements.txt)

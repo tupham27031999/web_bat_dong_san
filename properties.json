@@ -1,0 +1,261 @@
+[
+    {
+        "ma_bds": "BDS2",
+        "ten_bds": {
+            "VI": "cho thê nhà mặt đường",
+            "EN": "House for rent on the main road",
+            "JP": "幹線道路沿いの賃貸住宅"
+        },
+        "ma_buu_dien": "",
+        "tinh_thanh": {
+            "VI": "Tokyo",
+            "EN": "Tokyo",
+            "JP": "東京都"
+        },
+        "quan_huyen": {
+            "VI": "Shinjuku",
+            "EN": "Shinjuku",
+            "JP": "新宿区"
+        },
+        "dia_chi_chi_tiet": {
+            "VI": "12",
+            "EN": "12",
+            "JP": "12"
+        },
+        "mo_ta": {
+            "VI": "Nhà mặt phố bố làm to",
+            "EN": "House on the main street, father is a big shot.",
+            "JP": "大通りに面した家、父親は大物だ。"
+        },
+        "phan_loai": "thue",
+        "dien_tich": "33",
+        "so_phong_ngu": "2",
+        "so_tang": "1",
+        "gia_jpy": "2121",
+        "tien_thue_thang": "121",
+        "gia_usd": "12121",
+        "gia_vnd": "2121",
+        "phi_quan_ly": "121",
+        "phong_don": "no",
+        "phong_gia_dinh": "yes",
+        "nha_rieng": "yes",
+        "thu_nuoi": "yes",
+        "toa_do": "35.700345, 139.700257",
+        "ga_tau_gan": {
+            "VI": "33",
+            "EN": "44",
+            "JP": "55"
+        },
+        "anh_bds": [
+            "/static/uploads/properties/2a37e36f3f8a4f0ea524ba43229296b2_bb1.jpeg",
+            "/static/uploads/properties/4784a3c89f794e609ccac482d9d33467_bb2.jpeg",
+            "/static/uploads/properties/0ca0aa58e2584ed6b139ce240db87a3b_bb3.jpeg",
+            "/static/uploads/properties/2c6ae5a37445404aad37263157625236_bb4.jpeg"
+        ]
+    },
+    {
+        "ma_bds": "BDS110",
+        "ten_bds": {
+            "VI": "cho thuê nhà 2 tầng",
+            "EN": "Two-story house for rent",
+            "JP": "2階建ての賃貸住宅"
+        },
+        "ma_buu_dien": "",
+        "tinh_thanh": {
+            "VI": "Osaka",
+            "EN": "Osaka",
+            "JP": "大阪府"
+        },
+        "quan_huyen": {
+            "VI": "Setagaya",
+            "EN": "Setagaya",
+            "JP": "世田谷区"
+        },
+        "dia_chi_chi_tiet": {
+            "VI": "66",
+            "EN": "66",
+            "JP": "66"
+        },
+        "mo_ta": {
+            "VI": "Ngọc xinh gái",
+            "EN": "Ngoc is pretty.",
+            "JP": "ゴックは可愛い。"
+        },
+        "phan_loai": "thue",
+        "dien_tich": "887",
+        "so_phong_ngu": "6",
+        "so_tang": "8",
+        "gia_jpy": "787898",
+        "tien_thue_thang": "77",
+        "gia_usd": "878787",
+        "gia_vnd": "7677",
+        "phi_quan_ly": "76",
+        "phong_don": "no",
+        "phong_gia_dinh": "no",
+        "nha_rieng": "yes",
+        "thu_nuoi": "yes",
+        "toa_do": "34.669074, 135.501323",
+        "ga_tau_gan": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "anh_bds": [
+            "/static/uploads/properties/4e2813c43d3a4bb396fa817a306c19c7_bb5.jpeg",
+            "/static/uploads/properties/eec3dfac94834b0ebd4d1ad4b48feee1_bb4.jpeg",
+            "/static/uploads/properties/2167bc8b4acd48af8b60d2311f7eae13_bb3.jpeg",
+            "/static/uploads/properties/ffc2ab6a56264ee3a86c3088a3d141cf_bb2.jpeg"
+        ]
+    },
+    {
+        "ma_bds": "",
+        "ten_bds": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "ma_buu_dien": "",
+        "tinh_thanh": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "quan_huyen": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "dia_chi_chi_tiet": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "mo_ta": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "phan_loai": "ban",
+        "dien_tich": "",
+        "so_phong_ngu": "",
+        "so_tang": "",
+        "gia_jpy": "",
+        "tien_thue_thang": "",
+        "gia_usd": "",
+        "gia_vnd": "",
+        "phi_quan_ly": "",
+        "phong_don": "no",
+        "phong_gia_dinh": "no",
+        "nha_rieng": "no",
+        "thu_nuoi": "no",
+        "toa_do": "",
+        "ga_tau_gan": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "anh_bds": [
+            "/static/uploads/properties/9c31d1dbf51247ecb1091867d46cc373_bb1.jpeg"
+        ]
+    },
+    {
+        "ma_bds": "BDS5",
+        "ten_bds": {
+            "VI": "gg",
+            "EN": "rgrg",
+            "JP": "grg"
+        },
+        "ma_buu_dien": "",
+        "tinh_thanh": {
+            "VI": "Rgrg",
+            "EN": "Rg",
+            "JP": "Grgr"
+        },
+        "quan_huyen": {
+            "VI": "Rgrgr",
+            "EN": "Grg",
+            "JP": "Rgrg"
+        },
+        "dia_chi_chi_tiet": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "mo_ta": {
+            "VI": "grgrgr",
+            "EN": "grgrg",
+            "JP": "rgrgrgr"
+        },
+        "phan_loai": "thue",
+        "dien_tich": "44",
+        "so_phong_ngu": "2",
+        "so_tang": "3",
+        "gia_jpy": "3434",
+        "tien_thue_thang": "3434",
+        "gia_usd": "3434",
+        "gia_vnd": "44",
+        "phi_quan_ly": "",
+        "phong_don": "no",
+        "phong_gia_dinh": "no",
+        "nha_rieng": "no",
+        "thu_nuoi": "no",
+        "toa_do": "",
+        "ga_tau_gan": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "anh_bds": [
+            "/static/uploads/properties/7ce2e669bb0f4ce086ff93cd730fbe42_bb1.jpeg"
+        ]
+    },
+    {
+        "ma_bds": "BDS6",
+        "ten_bds": {
+            "VI": "grg",
+            "EN": "rgr",
+            "JP": "grgr"
+        },
+        "ma_buu_dien": "",
+        "tinh_thanh": {
+            "VI": "Grg",
+            "EN": "Rgrg",
+            "JP": "Rgrg"
+        },
+        "quan_huyen": {
+            "VI": "Grg",
+            "EN": "Grg",
+            "JP": "Rgrg"
+        },
+        "dia_chi_chi_tiet": {
+            "VI": "66",
+            "EN": "66",
+            "JP": "66"
+        },
+        "mo_ta": {
+            "VI": "grgrg",
+            "EN": "rgrgrg",
+            "JP": "rgrgr"
+        },
+        "phan_loai": "thue",
+        "dien_tich": "43",
+        "so_phong_ngu": "4",
+        "so_tang": "4",
+        "gia_jpy": "343",
+        "tien_thue_thang": "3434",
+        "gia_usd": "3434",
+        "gia_vnd": "4",
+        "phi_quan_ly": "",
+        "phong_don": "no",
+        "phong_gia_dinh": "yes",
+        "nha_rieng": "yes",
+        "thu_nuoi": "yes",
+        "toa_do": "",
+        "ga_tau_gan": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "anh_bds": []
+    }
+]
