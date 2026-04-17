@@ -9,10 +9,16 @@ let searchState = {
 let selectedPropertyType = ''; // Biến mới để lưu trạng thái chọn Thuê/Mua
 let currentFilters = ['tim_kiem_tat_ca'];
 let currentPage = 1;
-let currentViewedPropertyId = null;
 let currentPropertyImages = [];
 let currentLightboxIndex = 0;
 let currentScale = 1;
+
+// New state variables for Rent and Buy sections
+let currentRentFilters = ['tim_kiem_tat_ca'];
+let currentBuyFilters = ['tim_kiem_tat_ca'];
+let currentViewedPropertyId = null; // Moved here
+let currentRentPage = 1;
+let currentBuyPage = 1;
 
 async function initApp() {
     try {
@@ -25,12 +31,25 @@ async function initApp() {
         if (savedSearch) searchState = JSON.parse(savedSearch);
         
         // Khôi phục trạng thái chọn Thuê/Mua từ sessionStorage
-        const savedPropertyType = sessionStorage.getItem('selectedPropertyType');
-        if (savedPropertyType) selectedPropertyType = savedPropertyType;
+        // selectedPropertyType will now be used for scrolling to section, not filtering the main view
+        selectedPropertyType = sessionStorage.getItem('selectedPropertyType') || 'Rent'; // Default to Rent section active/visible
+
+        // Khôi phục trạng thái filter và page cho từng loại (Rent/Buy)
+        const savedRentFilters = sessionStorage.getItem('currentRentFilters');
+        if (savedRentFilters) currentRentFilters = JSON.parse(savedRentFilters);
+        const savedBuyFilters = sessionStorage.getItem('currentBuyFilters');
+        
+        if (savedBuyFilters) currentBuyFilters = JSON.parse(savedBuyFilters);
+
+        const savedRentPage = sessionStorage.getItem('currentRentPage');
+        if (savedRentPage) currentRentPage = parseInt(savedRentPage);
+        const savedBuyPage = sessionStorage.getItem('currentBuyPage');
+        if (savedBuyPage) currentBuyPage = parseInt(savedBuyPage);
 
         renderNavbar();
         renderHero();
         refreshMainUI();
+        updateSectionTitles();
         renderFooter();
 
         // Keyboard navigation for Lightbox
@@ -82,8 +101,8 @@ function renderNavbar() {
             <span>${info.tieu_de_ten_web[currentLang]}</span>
         </div>
         <div class="nav-center">
-            <a href="javascript:void(0)" id="nav-rent" onclick="selectPropertyType('Rent')" class="${selectedPropertyType === 'Rent' ? 'active-property-type' : ''}"><i class="fa-solid fa-key"></i> ${info.thue[currentLang]}</a>
-            <a href="javascript:void(0)" id="nav-buy" onclick="selectPropertyType('Buy')" class="${selectedPropertyType === 'Buy' ? 'active-property-type' : ''}"><i class="fa-solid fa-house-chimney"></i> ${info.mua[currentLang]}</a>
+            <a href="javascript:void(0)" id="nav-rent" onclick="scrollToSection('Rent')" class="${selectedPropertyType === 'Rent' ? 'active-property-type' : ''}"><i class="fa-solid fa-key"></i> ${info.thue[currentLang]}</a>
+            <a href="javascript:void(0)" id="nav-buy" onclick="scrollToSection('Buy')" class="${selectedPropertyType === 'Buy' ? 'active-property-type' : ''}"><i class="fa-solid fa-house-chimney"></i> ${info.mua[currentLang]}</a>
             <a href="javascript:void(0)"><i class="fas fa-newspaper"></i> ${info.blog[currentLang]}</a>
             <a href="javascript:void(0)"><i class="fas fa-circle-info"></i> ${info.about[currentLang]}</a>
             <a href="javascript:void(0)"><i class="fas fa-envelope"></i> ${info.contact[currentLang]}</a>
@@ -204,87 +223,122 @@ window.handleSearch = function() {
     sessionStorage.setItem('searchState', JSON.stringify(searchState));
     
     // Thực hiện render lại danh sách với bộ lọc mới
-    currentPage = 1;
-    renderProperties();
+    currentRentPage = 1;
+    currentBuyPage = 1;
+    refreshMainUI();
     window.scrollTo({ top: document.querySelector('.main-content-wrapper').offsetTop - 100, behavior: 'smooth' });
 };
 
-window.selectPropertyType = function(type) {
-    selectedPropertyType = (selectedPropertyType === type) ? '' : type; // Toggle selection
+window.scrollToSection = function(type) {
+    selectedPropertyType = type;
     sessionStorage.setItem('selectedPropertyType', selectedPropertyType); // Lưu trạng thái
-    closePropertyDetail();
     renderNavbar(); // Cập nhật lại navbar để hiển thị trạng thái active
-    currentPage = 1;
-    refreshMainUI();
+    // Nhắm mục tiêu đến ID của tiêu đề thay vì khung chứa để tiêu đề hiện ra khi cuộn
+    const targetId = type === 'Rent' ? 'rent-title' : 'buy-title';
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
+        // Điều chỉnh lại thành -150px để tiêu đề nằm ở vị trí thoáng hơn, không bị che khuất
+        window.scrollTo({ top: targetElement.offsetTop - 150, behavior: 'smooth' });
+    }
 };
 
-function refreshMainUI() {
-    renderSlogan();
-    renderFilters();
-    renderProperties();
-    renderFooter();
+function updateSectionTitles() {
+    const rentTitle = document.getElementById('rent-title');
+    const buyTitle = document.getElementById('buy-title');
+    if (!rentTitle || !buyTitle || !configData) return;
+
+    const info = configData.thong_tin_tieu_de;
+    rentTitle.innerHTML = `<i class="fa-solid fa-key"></i> ${info.thue[currentLang]}`;
+    buyTitle.innerHTML = `<i class="fa-solid fa-house-chimney"></i> ${info.mua[currentLang]}`;
 }
 
-function renderSlogan() {
-    const container = document.getElementById("slogan-container");
+function refreshMainUI() {
+    renderRentSection();
+    renderBuySection();
+}
+function renderRentSection() {
+    renderSloganForType('Rent');
+    renderFiltersForType('Rent');
+    renderPropertiesForType('Rent');
+}
+
+function renderBuySection() {
+    renderSloganForType('Buy');
+    renderFiltersForType('Buy');
+    renderPropertiesForType('Buy');
+}
+
+function renderSloganForType(type) {
+    const containerId = type === 'Rent' ? 'slogan-container-rent' : 'slogan-container-buy';
+    const container = document.getElementById(containerId);
     if (!container || !configData) return;
 
-    const sloganType = selectedPropertyType === 'Buy' ? 'slogan_mua' : 'slogan_thue';
-    const text = configData.slogan[sloganType][currentLang];
+    const sloganKey = type === 'Rent' ? 'slogan_thue' : 'slogan_mua';
+    const avatarPathKey = type === 'Rent' ? 'path_avatar_thue' : 'path_avatar_mua';
+    const text = configData.slogan[sloganKey][currentLang];
 
     container.innerHTML = `
         <div class="slogan-text">${text}</div> 
-        <img src="${configData.path_avatar}" class="avatar-3d" alt="3D Avatar">
+        <img src="${configData[avatarPathKey]}" class="avatar-3d" alt="3D Avatar">
     `;
 }
 
-function renderFilters() {
-    const container = document.getElementById("filter-options");
+function renderFiltersForType(type) {
+    const containerId = type === 'Rent' ? 'filter-options-rent' : 'filter-options-buy';
+    const container = document.getElementById(containerId);
     if (!container || !configData) return;
 
-    const options = configData.cac_lua_chon;
+    const options = type === 'Rent' ? configData.cac_lua_chon_thue : configData.cac_lua_chon_mua;
+    const currentFilters = type === 'Rent' ? currentRentFilters : currentBuyFilters;
+
     container.innerHTML = Object.keys(options).map(key => `
-        <div class="filter-tag ${currentFilters.includes(key) ? 'active' : ''}" 
-             onclick="toggleFilter('${key}')">
+        <div class="filter-tag ${currentFilters.includes(key) ? 'active' : ''}"
+             onclick="toggleFilterForType('${type}', '${key}')">
             ${options[key][currentLang]}
         </div>
     `).join('');
 }
+window.toggleFilterForType = function(type, key) {
+    let filters = type === 'Rent' ? currentRentFilters : currentBuyFilters;
 
-window.toggleFilter = function(key) {
     if (key === 'tim_kiem_tat_ca') {
-        currentFilters = ['tim_kiem_tat_ca'];
+        filters = ['tim_kiem_tat_ca'];
     } else {
         // Nếu chọn cái khác, bỏ 'tim_kiem_tat_ca'
-        currentFilters = currentFilters.filter(f => f !== 'tim_kiem_tat_ca');
+        filters = filters.filter(f => f !== 'tim_kiem_tat_ca');
         
-        if (currentFilters.includes(key)) {
-            currentFilters = currentFilters.filter(f => f !== key);
+        if (filters.includes(key)) {
+            filters = filters.filter(f => f !== key);
         } else {
-            currentFilters.push(key);
+            filters.push(key);
         }
         
         // Nếu không còn cái nào được chọn, tự động quay về 'tim_kiem_tat_ca'
-        if (currentFilters.length === 0) currentFilters = ['tim_kiem_tat_ca'];
+        if (filters.length === 0) filters = ['tim_kiem_tat_ca'];
     }
-    currentPage = 1;
-    renderFilters();
-    renderProperties();
+
+    if (type === 'Rent') {
+        currentRentFilters = filters;
+        sessionStorage.setItem('currentRentFilters', JSON.stringify(currentRentFilters));
+        currentRentPage = 1;
+    } else {
+        currentBuyFilters = filters;
+        sessionStorage.setItem('currentBuyFilters', JSON.stringify(currentBuyFilters));
+        currentBuyPage = 1;
+    }
+    renderFiltersForType(type);
+    renderPropertiesForType(type);
 };
 
-function renderProperties() {
-    const container = document.getElementById("property-list");
-    const paginationContainer = document.getElementById("pagination");
+function renderPropertiesForType(type) {
+    const containerId = type === 'Rent' ? 'property-list-rent' : 'property-list-buy';
+    const paginationContainerId = type === 'Rent' ? 'pagination-rent' : 'pagination-buy';
+    const container = document.getElementById(containerId);
+    const paginationContainer = document.getElementById(paginationContainerId);
     if (!container || !configData) return;
 
+    // Start with all properties
     let filtered = configData.danh_sach_bds || [];
-
-    // 1. Lọc theo Loại (Thuê / Mua) từ Navbar
-    if (selectedPropertyType === 'Rent') {
-        filtered = filtered.filter(p => p.phan_loai === 'thue');
-    } else if (selectedPropertyType === 'Buy') {
-        filtered = filtered.filter(p => p.phan_loai === 'ban');
-    }
 
     // 2. Lọc theo Thanh tìm kiếm (Search Bar)
     if (searchState.dia_chi) {
@@ -303,13 +357,15 @@ function renderProperties() {
         filtered = filtered.filter(p => parseFloat(p.gia_jpy) <= parseFloat(searchState.gia_thue_max));
     }
 
-    // 3. Lọc theo Tags (Single room, Family, etc.)
-    if (!currentFilters.includes('tim_kiem_tat_ca')) {
+    // 3. Lọc theo Loại (thue/ban) và Tags (Single room, Family, etc.)
+    const currentFiltersForType = type === 'Rent' ? currentRentFilters : currentBuyFilters;
+    filtered = filtered.filter(p => p.phan_loai === (type === 'Rent' ? 'thue' : 'ban'));
+    if (!currentFiltersForType.includes('tim_kiem_tat_ca')) {
         filtered = filtered.filter(p => {
-            return currentFilters.some(f => p[f] === 'yes');
+            return currentFiltersForType.some(f => p[f] === 'yes');
         });
     }
-
+    
     const itemsPerPage = 6;
     const totalItems = filtered.length;
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -341,9 +397,9 @@ function renderProperties() {
                     ${p.so_tang ? `<span><i class="fas fa-building"></i> ${p.so_tang} F</span>` : ''}
                 </div>
                 <div class="property-features">
-                    <i class="fas fa-user ${p.phong_don === 'yes' ? 'on' : 'off'}" title="${configData.cac_lua_chon.phong_don[currentLang]}"></i>
-                    <i class="fas fa-users ${p.phong_gia_dinh === 'yes' ? 'on' : 'off'}" title="${configData.cac_lua_chon.phong_gia_dinh[currentLang]}"></i>
-                    <i class="fas fa-home ${p.nha_rieng === 'yes' ? 'on' : 'off'}" title="${configData.cac_lua_chon.nha_rieng[currentLang]}"></i>
+                    <i class="fas fa-user ${p.phong_don === 'yes' ? 'on' : 'off'}" title="${(type === 'Rent' ? configData.cac_lua_chon_thue : configData.cac_lua_chon_mua).phong_don[currentLang]}"></i>
+                    <i class="fas fa-users ${p.phong_gia_dinh === 'yes' ? 'on' : 'off'}" title="${(type === 'Rent' ? configData.cac_lua_chon_thue : configData.cac_lua_chon_mua).phong_gia_dinh[currentLang]}"></i>
+                    <i class="fas fa-home ${p.nha_rieng === 'yes' ? 'on' : 'off'}" title="${(type === 'Rent' ? configData.cac_lua_chon_thue : configData.cac_lua_chon_mua).nha_rieng[currentLang]}"></i>
                     <i class="fas fa-paw ${p.thu_nuoi === 'yes' ? 'on' : 'off'}" title="${configData.thong_tin_bds_form.thu_nuoi.label[currentLang]}"></i>
                 </div>
             </div>
@@ -351,19 +407,31 @@ function renderProperties() {
     `).join('');
 
     // Render Pagination
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const totalPages = Math.ceil(filtered.length / itemsPerPage); // Use filtered.length here
     paginationContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
         <div class="page-btn ${page === currentPage ? 'active' : ''}" 
-             onclick="changePage(${page})">
+             onclick="changePageForType('${type}', ${page})">
             ${page}
         </div>
     `).join('');
-}
 
-window.changePage = function(page) {
-    currentPage = page;
-    renderProperties();
-    window.scrollTo({ top: document.querySelector('.main-content-wrapper').offsetTop - 100, behavior: 'smooth' });
+    // Save current page to session storage
+    if (type === 'Rent') {
+        sessionStorage.setItem('currentRentPage', currentPage);
+    } else {
+        sessionStorage.setItem('currentBuyPage', currentPage);
+    }
+};
+
+window.changePageForType = function(type, page) {
+    if (type === 'Rent') {
+        currentRentPage = page;
+    } else {
+        currentBuyPage = page;
+    }
+    renderPropertiesForType(type);
+    const targetId = type === 'Rent' ? 'rent-section-wrapper' : 'buy-section-wrapper';
+    window.scrollTo({ top: document.getElementById(targetId).offsetTop - 100, behavior: 'smooth' });
 };
 
 function renderBadge(type) {
@@ -384,8 +452,9 @@ window.changeLang = function(lang) {
     currentLang = lang;
     renderNavbar();
     renderHero();
-    refreshMainUI();
-    if (currentViewedPropertyId) {
+    updateSectionTitles();
+    refreshMainUI(); // Rerender both sections
+    if (currentViewedPropertyId) { // If a detail view is open, re-render it with new language
         showPropertyDetail(currentViewedPropertyId);
     }
 };
@@ -411,7 +480,7 @@ window.showPropertyDetail = function(ma_bds) {
     if (!prop) return;
 
     document.getElementById('hero-section').style.display = 'none';
-    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('main-content-wrapper').style.display = 'none'; // Hide the entire main content wrapper
     const detailView = document.getElementById('property-detail-view');
     detailView.style.display = 'block';
 
@@ -606,8 +675,8 @@ window.changeLightboxImage = function(step) {
 
 window.closePropertyDetail = function() {
     currentViewedPropertyId = null;
-    document.getElementById('hero-section').style.display = 'flex';
-    document.getElementById('main-content').style.display = 'flex';
+    document.getElementById('hero-section').style.display = 'flex'; // Show hero
+    document.getElementById('main-content-wrapper').style.display = 'flex'; // Show the entire main content wrapper
     document.getElementById('property-detail-view').style.display = 'none';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };

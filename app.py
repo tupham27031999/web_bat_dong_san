@@ -55,20 +55,22 @@ def get_config():
         "thanh_tim_kiem": Config.thanh_tim_kiem,
         "danh_sach_dia_chi_lua_chon": unique_wards,
         "slogan": Config.slogan,
-        "cac_lua_chon": Config.cac_lua_chon,
         "slogan_tim_kiem": Config.slogan_tim_kiem,
         "admin_window": Config.admin_window,
         "admin_auth": Config.admin, # Tạm thời để test so sánh ở frontend
         "thong_tin_bds_form": Config.thong_tin_bds_form,
         "danh_sach_bds": Config.danh_sach_bds,
         "admin_dashboard_labels": Config.admin_dashboard_labels,
+        "cac_lua_chon_thue": Config.cac_lua_chon_thue, # New
+        "cac_lua_chon_mua": Config.cac_lua_chon_mua,   # New
         "thong_tin_danh_sach_BDS": Config.thong_tin_danh_sach_BDS,
         "footer_data": Config.footer_data
     }
     # Chỉnh sửa path logo để web có thể truy cập được
     config_data["thong_tin_tieu_de"]["path_logo"] = cfg.path_logo
     config_data["path_hinh_nen"] = cfg.path_hinh_nen
-    config_data["path_avatar"] = cfg.path_avatar
+    config_data["path_avatar_thue"] = cfg.path_avatar_thue # New
+    config_data["path_avatar_mua"] = cfg.path_avatar_mua   # New
     return jsonify(config_data)
 
 @app.route('/api/admin/login', methods=['POST'])

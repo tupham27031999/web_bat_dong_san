@@ -106,5 +106,56 @@
             "/static/uploads/properties/2167bc8b4acd48af8b60d2311f7eae13_bb3.jpeg",
             "/static/uploads/properties/ffc2ab6a56264ee3a86c3088a3d141cf_bb2.jpeg"
         ]
+    },
+    {
+        "ma_bds": "",
+        "ten_bds": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "ma_buu_dien": "",
+        "tinh_thanh": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "quan_huyen": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "dia_chi_chi_tiet": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "mo_ta": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "phan_loai": "ban",
+        "dien_tich": "",
+        "so_phong_ngu": "",
+        "so_tang": "",
+        "gia_jpy": "",
+        "tien_thue_thang": "",
+        "gia_usd": "",
+        "gia_vnd": "",
+        "phi_quan_ly": "",
+        "phong_don": "no",
+        "phong_gia_dinh": "no",
+        "nha_rieng": "no",
+        "thu_nuoi": "no",
+        "toa_do": "",
+        "ga_tau_gan": {
+            "VI": "",
+            "EN": "",
+            "JP": ""
+        },
+        "anh_bds": [
+            "/static/uploads/properties/9c31d1dbf51247ecb1091867d46cc373_bb1.jpeg"
+        ]
     }
 ]

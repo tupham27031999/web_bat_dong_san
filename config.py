@@ -9,7 +9,8 @@ def edit_path(input):
 PATH_PHAN_MEM = edit_path(os.path.dirname(os.path.realpath(__file__)))
 path_logo = "/static/logo.PNG"
 path_hinh_nen = "/static/nen_bat_dong_san.jpg"
-path_avatar = "/static/slogan.png"
+path_avatar_thue = "/static/slogan_rent.png" # Đường dẫn ảnh avatar cho phần thuê
+path_avatar_mua = "/static/slogan_buy.png"  # Đường dẫn ảnh avatar cho phần bán
 
 def load_admin_credentials():
     admin_file = os.path.join(PATH_PHAN_MEM, "admin.json")
@@ -79,11 +80,20 @@ class Config:
                                "EN": "HOUSE FOR SALE,\nInstallment or Cash?\nFrom apartments and detached houses for living or investment, to buildings and land, we can meet your needs.",
                                "JP": "154住宅販売、分割払い \n現金払いどちらでもお探しですか？\n居住用または投資用のアパートや一戸建て住宅から、建物や土地まで、お客様のご希望に合った物件をご用意しております。"}
             }
-    cac_lua_chon = {"tim_kiem_tat_ca": {"VI": "Tìm kiếm tất cả", "EN": "Search all", "JP": "すべて検索する"},
-                    "phong_don": {"VI": "Phòng đơn", "EN": "Single room", "JP": "シングルルーム"},
-                    "phong_gia_dinh": {"VI": "Phòng gia đình", "EN": "Family room", "JP": "ファミリールーム"},
-                    "nha_rieng": {"VI": "Nhà riêng/Biệt lập", "EN": "Private house/Apartment", "JP": "プライベートハウス/アパートメント"},}
-    
+    # Các lựa chọn lọc riêng cho phần thuê
+    cac_lua_chon_thue = {
+        "tim_kiem_tat_ca": {"VI": "Tìm kiếm tất cả", "EN": "Search all", "JP": "すべて検索する"},
+        "phong_don": {"VI": "Phòng đơn", "EN": "Single room", "JP": "シングルルーム"},
+        "phong_gia_dinh": {"VI": "Phòng gia đình", "EN": "Family room", "JP": "ファミリールーム"},
+        "nha_rieng": {"VI": "Nhà riêng/Biệt lập", "EN": "Private house/Apartment", "JP": "プライベートハウス/アパートメント"},
+    }
+    # Các lựa chọn lọc riêng cho phần bán
+    cac_lua_chon_mua = {
+        "tim_kiem_tat_ca": {"VI": "Tìm kiếm tất cả", "EN": "Search all", "JP": "すべて検索する"},
+        "phong_don": {"VI": "Phòng đơn", "EN": "Single room", "JP": "シングルルーム"},
+        "phong_gia_dinh": {"VI": "Phòng gia đình", "EN": "Family room", "JP": "ファミリールーム"},
+        "nha_rieng": {"VI": "Nhà riêng/Biệt lập", "EN": "Private house/Apartment", "JP": "プライベートハウス/アパートメント"},
+    }
     admin = load_admin_credentials()
     admin_window = {
         "dang_nhap": {

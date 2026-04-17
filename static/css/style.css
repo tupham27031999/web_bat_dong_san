@@ -179,22 +179,76 @@ body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-l
 /* Filter & Slogan Section */
 .main-content-wrapper {
     display: flex;
-    max-width: 1400px; /* Tăng chiều rộng tổng thể của khung chứa */
-    margin: 60px auto;
-    gap: 20px; /* Giảm khoảng cách giữa slogan và danh sách BĐS */
+    flex-direction: column;
+    max-width: 1400px;
+    margin: -80px auto 100px; /* Hiệu ứng đè nhẹ lên Hero section */
+    gap: 100px; 
     padding: 0 20px;
+    position: relative;
+    z-index: 10;
+}
+
+.section-main-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #011D41; /* Màu Navy đậm để nổi bật trên nền sáng và chuyển tiếp từ Hero */
+    margin-bottom: 25px;
+    width: 100%;
+    display: flex;
+    align-items: center; justify-content: center;
+    gap: 20px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    letter-spacing: -1px;
+}
+
+/* Tạo phong cách sáng tạo cho các Icon tiêu đề */
+.section-main-title i {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    border-radius: 18px;
+    font-size: 1.6rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    border: 1px solid #F0F2F5;
+}
+
+/* Icon Rent - Màu xanh dương năng động */
+#rent-title i { 
+    color: #0061FF;
+    text-shadow: 0 0 15px rgba(0, 97, 255, 0.3);
+}
+
+/* Icon Buy - Màu xanh lá thịnh vượng */
+#buy-title i { 
+    color: #00D084;
+    text-shadow: 0 0 15px rgba(0, 208, 132, 0.3);
+}
+
+.main-content-section { /* Each individual rent/buy section */
+    display: flex;
+    gap: 30px;
     align-items: flex-start;
+    width: 100%;
+    background: var(--white);
+    padding: 40px;
+    border-radius: 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.03);
+    box-sizing: border-box;
+    border: 1px solid #F0F2F5;
 }
 
 .slogan-side {
     flex: 0 0 280px; /* Cố định chiều rộng khung slogan bé lại */
-    background: var(--white);
-    padding: 20px;
+    background: #FAFBFF;
+    padding: 25px;
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    border: 1px solid #E6E8EC;
     text-align: left;
     position: relative;
-    min-height: 400px;
+    min-height: 400px; /* Keep min-height for consistent layout */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
