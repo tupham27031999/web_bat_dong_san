@@ -36,12 +36,24 @@ def index():
 @app.route('/api/config')
 def get_config():
     # Trả về toàn bộ cấu hình cần thiết cho frontend
+    # Sáng tạo: Tự động lấy danh sách Quận/Huyện duy nhất từ các BĐS đang có, ưu tiên tiếng Anh
+    all_wards = []
+    for p in Config.danh_sach_bds:
+        ward_data = p.get('quan_huyen')
+        if ward_data:
+            if isinstance(ward_data, dict):
+                # Lấy phiên bản tiếng Anh, nếu không có thì lấy bất kỳ ngôn ngữ nào khác
+                all_wards.append(ward_data.get('EN') or next(iter(ward_data.values()), ''))
+            else:
+                all_wards.append(str(ward_data)) # Xử lý dữ liệu cũ có thể là chuỗi
+    unique_wards = sorted(list(set(all_wards)))
+
     config_data = {
         "ngon_ngu_mac_dinh": Config.ngon_ngu_mac_dinh,
         "thong_tin_tieu_de": Config.thong_tin_tieu_de.copy(),
         "lua_chon_admin": Config.lua_chon_admin,
         "thanh_tim_kiem": Config.thanh_tim_kiem,
-        "danh_sach_dia_chi_lua_chon": Config.danh_sach_dia_chi_lua_chon,
+        "danh_sach_dia_chi_lua_chon": unique_wards,
         "slogan": Config.slogan,
         "cac_lua_chon": Config.cac_lua_chon,
         "slogan_tim_kiem": Config.slogan_tim_kiem,
@@ -50,7 +62,8 @@ def get_config():
         "thong_tin_bds_form": Config.thong_tin_bds_form,
         "danh_sach_bds": Config.danh_sach_bds,
         "admin_dashboard_labels": Config.admin_dashboard_labels,
-        "thong_tin_danh_sach_BDS": Config.thong_tin_danh_sach_BDS
+        "thong_tin_danh_sach_BDS": Config.thong_tin_danh_sach_BDS,
+        "footer_data": Config.footer_data
     }
     # Chỉnh sửa path logo để web có thể truy cập được
     config_data["thong_tin_tieu_de"]["path_logo"] = cfg.path_logo

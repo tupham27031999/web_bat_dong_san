@@ -32,6 +32,15 @@ def load_properties():
             print(f"Lỗi khi đọc file properties.json: {e}")
     return []
 
+def load_footer_data():
+    footer_file = os.path.join(PATH_PHAN_MEM, "footer.json")
+    if os.path.exists(footer_file):
+        try:
+            with open(footer_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Lỗi khi đọc file footer.json: {e}")
+    return {}
 
 class Config:
     ngon_ngu_mac_dinh = "EN" # ngôn ngữ mặc định khi mở phần mềm
@@ -53,7 +62,7 @@ class Config:
                        "EN": "Helping You Find Your Home in Tokyo",
                        "JP": "東京での住まい探しをお手伝いします"}
     # thanh tìm kiếm ở trung tâm của web
-    danh_sach_dia_chi_lua_chon = ["SL1", "SL2", "SL3"]
+    danh_sach_dia_chi_lua_chon = [] # Sẽ được tính toán động từ dữ liệu thực tế
     thanh_tim_kiem = {"dia_chi": {"VI": "Địa chỉ", "EN": "Address", "JP": "住所"},
                       "so_phong_ngu": {"VI": "Phòng ngủ", "EN": "Bedrooms", "JP": "寝室数"},
                       "gia_tien": {"VI": "Giá tiền", "EN": "Price", "JP": "価格"},
@@ -103,7 +112,17 @@ class Config:
     thong_tin_bds_form = {
         "ma_bds": {"label": {"VI": "Mã bất động sản", "EN": "Property ID", "JP": "物件ID"}},
         "ten_bds": {"VI": "Tên bất động sản", "EN": "Property Name", "JP": "物件名"},
-        "dia_chi": {"VI": "Địa chỉ", "EN": "Address", "JP": "住所"},
+        "ma_buu_dien": {"label": {"VI": "Mã bưu điện (〒)", "EN": "Postal Code", "JP": "郵便番号"}},
+        "tinh_thanh": {
+            "VI": "Tỉnh/Thành phố", "EN": "Prefecture", "JP": "都道府県"
+        },
+        "quan_huyen": {
+            "VI": "Quận/Thị xã (Ward/City)", "EN": "Ward/City", "JP": "市区町村"
+        },
+        "dia_chi_chi_tiet": {
+            "VI": "Số nhà, Tòa nhà, Phòng", "EN": "Building Name / House No.", "JP": "番地・建物名・部屋番号"
+        },
+        "mo_ta": {"VI": "Mô tả chi tiết", "EN": "Detailed Description", "JP": "詳細説明"},
         "phan_loai": {
             "label": {"VI": "Phân loại", "EN": "Category", "JP": "カテゴリー"},
             "options": {
@@ -120,6 +139,21 @@ class Config:
         "gia_usd": {"label": {"VI": "Giá USD", "EN": "Price USD", "JP": "価格 USD"}},
         "gia_vnd": {"label": {"VI": "Giá VNĐ", "EN": "Price VND", "JP": "価格 VND"}},
         "phi_quan_ly": {"label": {"VI": "Phí quản lý (nếu có)", "EN": "Management fee", "JP": "管理費"}},
+        "phong_don": {
+            "label": {"VI": "Phòng đơn", "EN": "Single room", "JP": "シングルルーム"},
+            "options": {"yes": {"VI": "Có", "EN": "Yes", "JP": "はい"}, "no": {"VI": "Không", "EN": "No", "JP": "いいえ"}}
+        },
+        "phong_gia_dinh": {
+            "label": {"VI": "Phòng gia đình", "EN": "Family room", "JP": "ファミリールーム"},
+            "options": {"yes": {"VI": "Có", "EN": "Yes", "JP": "はい"}, "no": {"VI": "Không", "EN": "No", "JP": "いいえ"}}
+        },
+        "nha_rieng": {
+            "label": {"VI": "Nhà riêng/Biệt lập", "EN": "Private house/Apartment", "JP": "プライベートハウス/アパートメント"},
+            "options": {
+                "yes": {"VI": "Có", "EN": "Yes", "JP": "はい"},
+                "no": {"VI": "Không", "EN": "No", "JP": "いいえ"}
+            }
+        },
         "thu_nuoi": {
             "label": {"VI": "Cho phép thú nuôi", "EN": "Pets allowed", "JP": "ペット可"},
             "options": {
@@ -133,6 +167,8 @@ class Config:
     }
 
     danh_sach_bds = load_properties() # Tải dữ liệu từ file khi khởi động
+    footer_data = load_footer_data() # Tải dữ liệu footer
+    print("danh_sach_bds", danh_sach_bds)
     temp_property_data = {} # Biến để lưu giá trị sau khi người dùng nhập
 
     admin_dashboard_labels = {

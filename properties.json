@@ -2,14 +2,30 @@
     {
         "ma_bds": "BDS2",
         "ten_bds": {
-            "VI": "222",
-            "EN": "4444",
-            "JP": "3333"
+            "VI": "cho thê nhà mặt đường",
+            "EN": "House for rent on the main road",
+            "JP": "幹線道路沿いの賃貸住宅"
         },
-        "dia_chi": {
-            "VI": "3333",
-            "EN": "444",
-            "JP": "2222"
+        "ma_buu_dien": "",
+        "tinh_thanh": {
+            "VI": "Tokyo",
+            "EN": "Tokyo",
+            "JP": "東京都"
+        },
+        "quan_huyen": {
+            "VI": "Shinjuku",
+            "EN": "Shinjuku",
+            "JP": "新宿区"
+        },
+        "dia_chi_chi_tiet": {
+            "VI": "12",
+            "EN": "12",
+            "JP": "12"
+        },
+        "mo_ta": {
+            "VI": "Nhà mặt phố bố làm to",
+            "EN": "House on the main street, father is a big shot.",
+            "JP": "大通りに面した家、父親は大物だ。"
         },
         "phan_loai": "thue",
         "dien_tich": "33",
@@ -20,25 +36,50 @@
         "gia_usd": "12121",
         "gia_vnd": "2121",
         "phi_quan_ly": "121",
+        "phong_don": "no",
+        "phong_gia_dinh": "yes",
+        "nha_rieng": "yes",
         "thu_nuoi": "yes",
-        "toa_do": "123",
+        "toa_do": "35.700345, 139.700257",
         "ga_tau_gan": {
             "VI": "33",
             "EN": "44",
             "JP": "55"
-        }
+        },
+        "anh_bds": [
+            "/static/uploads/properties/2a37e36f3f8a4f0ea524ba43229296b2_bb1.jpeg",
+            "/static/uploads/properties/4784a3c89f794e609ccac482d9d33467_bb2.jpeg",
+            "/static/uploads/properties/0ca0aa58e2584ed6b139ce240db87a3b_bb3.jpeg",
+            "/static/uploads/properties/2c6ae5a37445404aad37263157625236_bb4.jpeg"
+        ]
     },
     {
         "ma_bds": "BDS110",
         "ten_bds": {
-            "VI": "eef",
-            "EN": "eee",
-            "JP": "rcc"
+            "VI": "cho thuê nhà 2 tầng",
+            "EN": "Two-story house for rent",
+            "JP": "2階建ての賃貸住宅"
         },
-        "dia_chi": {
-            "VI": "dd",
-            "EN": "ccc",
-            "JP": "ccc"
+        "ma_buu_dien": "",
+        "tinh_thanh": {
+            "VI": "Osaka",
+            "EN": "Osaka",
+            "JP": "大阪府"
+        },
+        "quan_huyen": {
+            "VI": "Setagaya",
+            "EN": "Setagaya",
+            "JP": "世田谷区"
+        },
+        "dia_chi_chi_tiet": {
+            "VI": "66",
+            "EN": "66",
+            "JP": "66"
+        },
+        "mo_ta": {
+            "VI": "Ngọc xinh gái",
+            "EN": "Ngoc is pretty.",
+            "JP": "ゴックは可愛い。"
         },
         "phan_loai": "thue",
         "dien_tich": "887",
@@ -49,13 +90,21 @@
         "gia_usd": "878787",
         "gia_vnd": "7677",
         "phi_quan_ly": "76",
+        "phong_don": "no",
+        "phong_gia_dinh": "no",
+        "nha_rieng": "yes",
         "thu_nuoi": "yes",
-        "toa_do": "776",
+        "toa_do": "34.669074, 135.501323",
         "ga_tau_gan": {
             "VI": "",
             "EN": "",
             "JP": ""
         },
-        "anh_bds": []
+        "anh_bds": [
+            "/static/uploads/properties/4e2813c43d3a4bb396fa817a306c19c7_bb5.jpeg",
+            "/static/uploads/properties/eec3dfac94834b0ebd4d1ad4b48feee1_bb4.jpeg",
+            "/static/uploads/properties/2167bc8b4acd48af8b60d2311f7eae13_bb3.jpeg",
+            "/static/uploads/properties/ffc2ab6a56264ee3a86c3088a3d141cf_bb2.jpeg"
+        ]
     }
 ]

@@ -85,8 +85,8 @@ function renderForm() {
 
     for (const key in formConfig) {
         const field = formConfig[key];
-        // Mã BĐS, Tên, Địa chỉ và Ga tàu sẽ chiếm trọn dòng để dễ nhập liệu
-        const isFullWidth = ['ma_bds', 'ten_bds', 'dia_chi', 'ga_tau_gan', 'anh_bds'].includes(key);
+        // Mã BĐS, Tên, Địa chỉ, Ga tàu và Mô tả sẽ chiếm trọn dòng để dễ nhập liệu
+        const isFullWidth = ['ma_bds', 'ten_bds', 'dia_chi', 'ga_tau_gan', 'mo_ta', 'anh_bds'].includes(key);
         const colClass = isFullWidth ? 'full-width' : '';
 
         html += `<div class="admin-input-group ${colClass}">`;
@@ -95,17 +95,28 @@ function renderForm() {
         if (field.VI && field.EN && field.JP && !field.label) {
             html += `<label>${field[currentLang]}</label><div class="lang-inputs">`;
             ['VI', 'EN', 'JP'].forEach(lang => {
-                html += `<div class="lang-field"><span class="lang-badge">${lang}</span><input type="text" class="admin-input" id="${key}_${lang}" placeholder="..."></div>`;
+                if (key === 'mo_ta') {
+                    html += `<div class="lang-field"><span class="lang-badge">${lang}</span><textarea class="admin-input" id="${key}_${lang}" rows="4" placeholder="..."></textarea></div>`;
+                } else {
+                    html += `<div class="lang-field"><span class="lang-badge">${lang}</span><input type="text" class="admin-input" id="${key}_${lang}" placeholder="..."></div>`;
+                }
             });
             html += `</div>`;
         } 
         // Nếu là trường Select (như phân loại)
         else if (field.options) {
-            html += `<label>${field.label[currentLang]}</label><select class="admin-input" id="${key}">`;
-            for (const optKey in field.options) {
-                html += `<option value="${optKey}">${field.options[optKey][currentLang]}</option>`;
+            const isBinary = field.options.yes && field.options.no;
+            html += `<label>${field.label[currentLang]}</label>`;
+            
+            if (isBinary) {
+                html += `<label class="switch"><input type="checkbox" id="${key}"><span class="slider round"></span></label>`;
+            } else {
+                html += `<select class="admin-input" id="${key}">`;
+                for (const optKey in field.options) {
+                    html += `<option value="${optKey}">${field.options[optKey][currentLang]}</option>`;
+                }
+                html += `</select>`;
             }
-            html += `</select>`;
         }
         // Nếu là trường Ảnh
         else if (key === 'anh_bds') {
@@ -213,13 +224,17 @@ window.renderPropertyList = function() {
     filtered.forEach(p => {
         // Đảm bảo lấy đúng ngôn ngữ cho dữ liệu từng hàng
         const name = (p.ten_bds && typeof p.ten_bds === 'object') ? p.ten_bds[currentLang] : (p.ten_bds || '');
-        const addr = (p.dia_chi && typeof p.dia_chi === 'object') ? p.dia_chi[currentLang] : (p.dia_chi || '');
+        
+        // Tạo chuỗi địa chỉ tóm tắt cho bảng admin
+        const prefecture = (p.tinh_thanh && typeof p.tinh_thanh === 'object') ? p.tinh_thanh[currentLang] : (p.tinh_thanh || '');
+        const ward = (p.quan_huyen && typeof p.quan_huyen === 'object') ? p.quan_huyen[currentLang] : (p.quan_huyen || '');
+        const fullAddr = `${prefecture} ${ward}`;
 
         html += `
             <tr>
                 <td style="font-weight: 700; color: var(--primary-color);">${p.ma_bds}</td>
                 <td>${name}</td>
-                <td>${addr}</td>
+                <td>${fullAddr}</td>
                 <td>${parseInt(p.gia_jpy || 0).toLocaleString()}</td>
                 <td>
                     <div style="display: flex; gap: 8px;">
@@ -276,7 +291,10 @@ window.editProperty = function(ma_bds) {
             if (document.getElementById(`${key}_JP`)) document.getElementById(`${key}_JP`).value = prop[key]?.JP || '';
         } else {
             const el = document.getElementById(key);
-            if (el) el.value = prop[key] || '';
+            if (el) {
+                if (el.type === 'checkbox') el.checked = prop[key] === 'yes';
+                else el.value = prop[key] || '';
+            }
         }
     }
     renderImagePreviews();
@@ -308,14 +326,36 @@ window.saveProperty = async function() {
                 JP: document.getElementById(`${key}_JP`)?.value || ''
             };
         } 
-        // Nếu là trường đơn (ID, Giá, Diện tích, Select...)
+        // Nếu là trường đơn (ID, Giá, Diện tích, Select, Checkbox...)
         else {
             const el = document.getElementById(key);
-            if (el) propertyData[key] = el.value;
+            if (el) {
+                if (el.type === 'checkbox') propertyData[key] = el.checked ? 'yes' : 'no';
+                else propertyData[key] = el.value;
+            }
         }
     }
     // Thêm danh sách ảnh vào dữ liệu
     propertyData['anh_bds'] = uploadedImages;
+
+    // Helper function to format string to Title Case
+    const formatTitleCase = (str) => {
+        if (!str) return '';
+        return str.trim().toLowerCase().split(' ').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+    };
+
+    // Apply Title Case formatting to each language version of tinh_thanh and quan_huyen
+    for (const key of ['tinh_thanh', 'quan_huyen']) {
+        if (propertyData[key] && typeof propertyData[key] === 'object') {
+            for (const lang of ['VI', 'EN', 'JP']) {
+                if (propertyData[key][lang]) {
+                    propertyData[key][lang] = formatTitleCase(propertyData[key][lang]);
+                }
+            }
+        }
+    }
 
     // Kiểm tra giá trị âm cho các trường số (nếu có nhập)
     const numericFields = ['dien_tich', 'so_phong_ngu', 'so_tang', 'gia_jpy', 'tien_thue_thang', 'gia_usd', 'gia_vnd', 'phi_quan_ly'];
