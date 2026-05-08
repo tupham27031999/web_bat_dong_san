@@ -121,12 +121,17 @@ def upload_file():
             file_options={"content-type": file.content_type}
         )
         
-        # Lấy URL công khai
-        res_url = supabase.storage.from_('properties').get_public_url(unique_filename)
-        # Đảm bảo res_url là một chuỗi (phòng trường hợp thư viện trả về object)
-        if not isinstance(res_url, str):
-            res_url = getattr(res_url, 'public_url', str(res_url))
-            
+        try:
+            # Lấy URL công khai từ Supabase Storage
+            res_url = supabase.storage.from_('properties').get_public_url(unique_filename)
+            # Đảm bảo res_url là một chuỗi (phòng trường hợp thư viện trả về object)
+            if not isinstance(res_url, str):
+                # Supabase-py v2 trả về object có thuộc tính public_url
+                res_url = getattr(res_url, 'public_url', str(res_url))
+        except Exception as storage_err:
+            print(f"Storage error: {storage_err}")
+            return jsonify({"success": False, "message": "Could not get public URL"})
+
         return jsonify({"success": True, "url": res_url})
     except Exception as e:
         return jsonify({"success": False, "message": str(e)})
@@ -212,5 +217,11 @@ def update_property():
         return jsonify({"success": False, "message": str(e)})
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    # Ưu tiên lấy Port từ môi trường (như PythonAnywhere cung cấp hoặc bạn đặt)
+    # Nếu không có, mặc định dùng 5001 để tránh xung đột với port 5000 phổ biến
+    port = int(os.environ.get("PORT", 5001))
+    try:
+        print(f"Khởi động Server tại: http://127.0.0.1:{port}")
+        app.run(host='0.0.0.0', port=port, debug=True)
+    except Exception as e:
+        print(f"Không thể khởi động trên cổng {port}: {e}")
