@@ -1,18 +1,38 @@
 # config.py
 import os
 import json
+from supabase import create_client, Client
+from dotenv import load_dotenv
 
 def edit_path(input):
     return input.replace("\\", "/")
 
-
 PATH_PHAN_MEM = edit_path(os.path.dirname(os.path.realpath(__file__)))
+
+# Load biến môi trường từ file .env với đường dẫn tuyệt đối
+load_dotenv(os.path.join(PATH_PHAN_MEM, ".env"))
+
+# Cấu hình Supabase (Thay thế bằng thông tin thực tế của bạn)
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://vtnbztateavctntwpkzg.supabase.co")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+if not SUPABASE_KEY:
+    raise ValueError("Lỗi: Không tìm thấy SUPABASE_KEY trong file .env hoặc biến môi trường!")
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 path_logo = "/static/logo.PNG"
 path_hinh_nen = "/static/nen_bat_dong_san.jpg"
 path_avatar_thue = "/static/slogan_rent.png" # Đường dẫn ảnh avatar cho phần thuê
 path_avatar_mua = "/static/slogan_buy.png"  # Đường dẫn ảnh avatar cho phần bán
 
 def load_admin_credentials():
+    try:
+        response = supabase.table('admin').select("*").limit(1).execute()
+        if response.data:
+            return response.data[0]
+    except Exception as e:
+        print(f"Lỗi khi đọc admin từ Supabase: {e}")
     admin_file = os.path.join(PATH_PHAN_MEM, "admin.json")
     if os.path.exists(admin_file):
         try:
@@ -24,6 +44,11 @@ def load_admin_credentials():
     return {"tai_khoan": "admin", "mat_khau": "123"}
 
 def load_properties():
+    try:
+        response = supabase.table('properties').select("*").execute()
+        return response.data
+    except Exception as e:
+        print(f"Lỗi khi đọc properties từ Supabase: {e}")
     properties_file = os.path.join(PATH_PHAN_MEM, "properties.json")
     if os.path.exists(properties_file):
         try:
@@ -213,6 +238,12 @@ class Config:
     def save_admin(new_data):
         admin_file = os.path.join(PATH_PHAN_MEM, "admin.json")
         try:
+            # Cập nhật mật khẩu dựa trên tài khoản
+            supabase.table('admin').update({"mat_khau": new_data['mat_khau']}).eq("tai_khoan", new_data['tai_khoan']).execute()
+            Config.admin = new_data
+        except Exception as e:
+            print(f"Lỗi khi lưu admin lên Supabase: {e}")
+        try:
             with open(admin_file, 'w', encoding='utf-8') as f:
                 json.dump(new_data, f, ensure_ascii=False, indent=4)
             Config.admin = new_data # Cập nhật lại biến trong bộ nhớ
@@ -224,6 +255,8 @@ class Config:
     @staticmethod
     def save_properties(data):
         properties_file = os.path.join(PATH_PHAN_MEM, "properties.json")
+        # Lưu ý: Với DB, thường ta sẽ insert/update từng bản ghi thay vì lưu cả list.
+        # Hàm này được giữ lại để đồng bộ biến global Config.danh_sach_bds
         try:
             with open(properties_file, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)

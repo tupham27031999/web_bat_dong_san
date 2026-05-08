@@ -152,8 +152,9 @@ window.handleImageUpload = async function(event) {
         try {
             const response = await fetch('/api/admin/upload', { method: 'POST', body: formData });
             const result = await response.json();
-            if (result.success) {
-                uploadedImages.push(result.url);
+            console.log("Upload result:", result); // Debug để xem URL trả về
+            if (result.success && result.url) {
+                uploadedImages.push(String(result.url)); // Đảm bảo lưu dưới dạng chuỗi
                 renderImagePreviews();
             }
         } catch (e) { console.error("Upload error:", e); }
@@ -222,12 +223,10 @@ window.renderPropertyList = function() {
     `;
 
     filtered.forEach(p => {
-        // Đảm bảo lấy đúng ngôn ngữ cho dữ liệu từng hàng
-        const name = (p.ten_bds && typeof p.ten_bds === 'object') ? p.ten_bds[currentLang] : (p.ten_bds || '');
-        
-        // Tạo chuỗi địa chỉ tóm tắt cho bảng admin
-        const prefecture = (p.tinh_thanh && typeof p.tinh_thanh === 'object') ? p.tinh_thanh[currentLang] : (p.tinh_thanh || '');
-        const ward = (p.quan_huyen && typeof p.quan_huyen === 'object') ? p.quan_huyen[currentLang] : (p.quan_huyen || '');
+        const langKey = currentLang.toLowerCase();
+        const name = p[`ten_bds_${langKey}`] || '';
+        const prefecture = p[`tinh_thanh_${langKey}`] || '';
+        const ward = p[`quan_huyen_${langKey}`] || '';
         const fullAddr = `${prefecture} ${ward}`;
 
         html += `
@@ -286,9 +285,9 @@ window.editProperty = function(ma_bds) {
 
         const field = formConfig[key];
         if (field.VI && field.EN && field.JP && !field.label) {
-            if (document.getElementById(`${key}_VI`)) document.getElementById(`${key}_VI`).value = prop[key]?.VI || '';
-            if (document.getElementById(`${key}_EN`)) document.getElementById(`${key}_EN`).value = prop[key]?.EN || '';
-            if (document.getElementById(`${key}_JP`)) document.getElementById(`${key}_JP`).value = prop[key]?.JP || '';
+            if (document.getElementById(`${key}_VI`)) document.getElementById(`${key}_VI`).value = prop[`${key}_vi`] || '';
+            if (document.getElementById(`${key}_EN`)) document.getElementById(`${key}_EN`).value = prop[`${key}_en`] || '';
+            if (document.getElementById(`${key}_JP`)) document.getElementById(`${key}_JP`).value = prop[`${key}_jp`] || '';
         } else {
             const el = document.getElementById(key);
             if (el) {
@@ -320,18 +319,23 @@ window.saveProperty = async function() {
         
         // Nếu là trường đa ngôn ngữ (VI, EN, JP)
         if (field.VI && field.EN && field.JP && !field.label) {
-            propertyData[key] = {
-                VI: document.getElementById(`${key}_VI`)?.value || '',
-                EN: document.getElementById(`${key}_EN`)?.value || '',
-                JP: document.getElementById(`${key}_JP`)?.value || ''
-            };
+            propertyData[`${key}_vi`] = document.getElementById(`${key}_VI`)?.value || '';
+            propertyData[`${key}_en`] = document.getElementById(`${key}_EN`)?.value || '';
+            propertyData[`${key}_jp`] = document.getElementById(`${key}_JP`)?.value || '';
         } 
         // Nếu là trường đơn (ID, Giá, Diện tích, Select, Checkbox...)
         else {
             const el = document.getElementById(key);
             if (el) {
-                if (el.type === 'checkbox') propertyData[key] = el.checked ? 'yes' : 'no';
-                else propertyData[key] = el.value;
+                if (el.type === 'checkbox') {
+                    propertyData[key] = el.checked ? 'yes' : 'no';
+                } else {
+                    // Chuyển đổi sang số hoặc null cho các trường số để tránh lỗi DB (PostgreSQL 22P02)
+                    const numericFields = ['dien_tich', 'so_phong_ngu', 'so_tang', 'gia_jpy', 'tien_thue_thang', 'gia_usd', 'gia_vnd', 'phi_quan_ly'];
+                    const val = el.value.trim();
+                    // Nếu là trường số và bỏ trống, gửi null thay vì chuỗi rỗng "" để DB chấp nhận
+                    propertyData[key] = (numericFields.includes(key)) ? (val === "" ? null : parseFloat(val)) : val;
+                }
             }
         }
     }
@@ -348,11 +352,10 @@ window.saveProperty = async function() {
 
     // Apply Title Case formatting to each language version of tinh_thanh and quan_huyen
     for (const key of ['tinh_thanh', 'quan_huyen']) {
-        if (propertyData[key] && typeof propertyData[key] === 'object') {
-            for (const lang of ['VI', 'EN', 'JP']) {
-                if (propertyData[key][lang]) {
-                    propertyData[key][lang] = formatTitleCase(propertyData[key][lang]);
-                }
+        for (const lang of ['vi', 'en', 'jp']) {
+            const flatKey = `${key}_${lang}`;
+            if (propertyData[flatKey]) {
+                propertyData[flatKey] = formatTitleCase(propertyData[flatKey]);
             }
         }
     }
@@ -372,7 +375,7 @@ window.saveProperty = async function() {
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(isEditing ? propertyData : propertyData)
+            body: JSON.stringify(propertyData)
         });
         const result = await response.json();
         if (result.success) {

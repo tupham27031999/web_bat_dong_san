@@ -1,0 +1,124 @@
+Bước 1: Tạo bảng dữ liệu trên Supabase
+Bạn truy cập vào SQL Editor trong bảng điều khiển của Supabase và chạy đoạn mã SQL sau để tạo cấu trúc bảng properties và admin:
+
+sql
+-- Tạo bảng properties với cấu trúc phẳng
+CREATE TABLE properties (
+    ma_bds TEXT PRIMARY KEY,
+    phan_loai TEXT,
+    gia_jpy BIGINT,
+    gia_usd NUMERIC,
+    gia_vnd BIGINT,
+    dien_tich NUMERIC,
+    so_phong_ngu INT,
+    so_tang INT,
+    ma_buu_dien TEXT,
+    phi_quan_ly NUMERIC,
+    tien_thue_thang NUMERIC,
+    toa_do TEXT,
+    phong_don TEXT,         -- 'yes' hoặc 'no'
+    phong_gia_dinh TEXT,    -- 'yes' hoặc 'no'
+    nha_rieng TEXT,         -- 'yes' hoặc 'no'
+    thu_nuoi TEXT,          -- 'yes' hoặc 'no'
+    anh_bds JSONB DEFAULT '[]', -- Vẫn dùng JSONB để lưu danh sách đường dẫn ảnh
+    
+    -- Các cột đa ngôn ngữ
+    ten_bds_vi TEXT,
+    ten_bds_en TEXT,
+    ten_bds_jp TEXT,
+    tinh_thanh_vi TEXT,
+    tinh_thanh_en TEXT,
+    tinh_thanh_jp TEXT,
+    quan_huyen_vi TEXT,
+    quan_huyen_en TEXT,
+    quan_huyen_jp TEXT,
+    dia_chi_chi_tiet_vi TEXT,
+    dia_chi_chi_tiet_en TEXT,
+    dia_chi_chi_tiet_jp TEXT,
+    mo_ta_vi TEXT,
+    mo_ta_en TEXT,
+    mo_ta_jp TEXT,
+    ga_tau_gan_vi TEXT,
+    ga_tau_gan_en TEXT,
+    ga_tau_gan_jp TEXT,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+
+-- Tạo bảng admin để quản lý tài khoản
+CREATE TABLE admin (
+    id SERIAL PRIMARY KEY,
+    tai_khoan TEXT UNIQUE NOT NULL,
+    mat_khau TEXT NOT NULL
+);
+
+-- Thêm tài khoản mặc định
+INSERT INTO admin (tai_khoan, mat_khau) VALUES ('admin', '123');
+-- Cho phép mọi thao tác đọc/ghi trên bảng properties
+ALTER TABLE properties DISABLE ROW LEVEL SECURITY;
+
+-- Cho phép mọi thao tác đọc/ghi trên bảng admin
+ALTER TABLE admin DISABLE ROW LEVEL SECURITY;
+
+
+
+Bước 3: Lưu ý quan trọng khi vận hành
+Đồng bộ dữ liệu: Khi bạn nhập liệu từ trang Admin, biến propertyData trong admin.js bây giờ sẽ tạo ra các key như ten_bds_vi thay vì object lồng nhau. Điều này tương ứng trực tiếp với các cột trong bảng SQL bạn vừa tạo.
+Kiểu dữ liệu: Supabase (Postgres) phân biệt giữa số nguyên (BIGINT) và số thực (NUMERIC). Đảm bảo các trường như gia_jpy được gửi lên là kiểu số (JS sẽ tự hiểu nếu bạn dùng parseFloat hoặc parseInt hoặc lấy giá trị từ input type="number").
+Bảo mật: Hiện tại bảng admin đang lưu mật khẩu dạng text thô. Sau này khi đưa vào sản xuất, bạn nên cân nhắc sử dụng tính năng Supabase Auth có sẵn để bảo mật hơn.
+Row Level Security (RLS): Trên Supabase, hãy vào phần Authentication -> Policies.
+Với bảng properties: Cho phép SELECT cho anon (mọi người), nhưng INSERT/UPDATE/DELETE chỉ dành cho người dùng đã xác thực (nếu dùng Auth) hoặc tạm thời tắt RLS nếu bạn chỉ dùng nội bộ.
+Sau khi thực hiện các bước này, bạn có thể xóa file properties.json và admin.json (hoặc giữ lại làm bản backup) vì hệ thống sẽ ưu tiên đọc từ Supabase.
+
+
+
+============================================================ phần ảnh ========================
+
+
+Chúc mừng bạn đã thông suốt phần Database! Về việc lưu trữ hình ảnh, mình xin tư vấn như sau:
+
+Cloudinary: Có gói miễn phí rất tốt (khoảng 25GB lưu trữ hoặc băng thông). Nó rất mạnh về việc tự động tối ưu hóa kích thước ảnh cho web.
+Google Drive: Không nên dùng. Google Drive không được thiết kế để làm host ảnh cho website. Việc lấy link trực tiếp rất khó khăn, tốc độ tải chậm và dễ bị lỗi hiển thị.
+Supabase Storage (Khuyên dùng): Vì bạn đã dùng Supabase cho Database, việc dùng luôn Supabase Storage là hợp lý nhất.
+Miễn phí: 1GB lưu trữ và 5GB băng thông mỗi tháng (đủ cho hàng nghìn tấm ảnh bất động sản).
+Tiện lợi: Quản lý cùng một nơi với DB, API đồng bộ, dễ dàng phân quyền bảo mật.
+Dưới đây là các bước chuyển đổi từ lưu file cục bộ sang Supabase Storage:
+
+Bước 1: Tạo Bucket trên Supabase
+Vào Dashboard Supabase -> Storage.
+Nhấn New Bucket, đặt tên là properties.
+Chỉnh chế độ thành Public (để khách xem web có thể thấy ảnh).
+Bước 2: Cập nhật mã nguồn - đã ok
+Chúng ta sẽ sửa app.py để khi upload ảnh, nó sẽ đẩy trực tiếp lên Supabase thay vì lưu vào thư mục static/uploads.
+
+
+Tại sao nên chọn Supabase Storage?
+Đồng bộ: Bạn không cần cài thêm thư viện như Cloudinary, đã có sẵn trong đối tượng supabase bạn khởi tạo ở config.py.
+Tốc độ: Ảnh được phục vụ qua CDN của Supabase nên tốc độ tải trang sẽ rất nhanh.
+Dễ dàng bảo trì: Khi bạn xóa một bất động sản, mã nguồn trên sẽ tự động gọi lệnh xóa ảnh trên Cloud, giúp tiết kiệm dung lượng lưu trữ.
+Lưu ý: Sau khi thay đổi code, các ảnh cũ bạn đã upload ở static/uploads sẽ không hiển thị được nếu bạn không upload lại chúng lên Supabase. Bạn nên xóa trắng dữ liệu cũ và bắt đầu đăng tin mới để test nhé.
+
+
+
+=========== chú ý ================
+Khi bạn tạo một Bucket mới trên Supabase Storage, thường sẽ có 3 lựa chọn quan trọng. Dưới đây là hướng dẫn chi tiết để bạn thiết lập tối ưu cho website bất động sản của mình:
+
+1. Public Bucket (Thùng chứa công khai) - BẮT BUỘC BẬT (ON)
+Đây là lựa chọn quan trọng nhất.
+
+Tại sao: Khi bật tính năng này, bất kỳ ai (khách truy cập web) cũng có thể xem được ảnh thông qua đường link URL mà không cần mã xác thực (Token).
+Hậu quả nếu tắt: Ảnh sẽ không hiển thị được trên trang chủ và trang chi tiết của khách hàng vì quyền truy cập bị chặn.
+2. File size limit (Giới hạn dung lượng file) - NÊN BẬT (ON)
+Lựa chọn này giúp bạn kiểm soát dung lượng ảnh upload lên để tránh lãng phí tài nguyên hoặc bị người dùng upload file quá nặng làm chậm web.
+
+Gợi ý: Bạn nên đặt giới hạn khoảng 5MB (5.242.880 bytes) hoặc 10MB. Ảnh bất động sản thường chỉ cần độ phân giải vừa phải để load nhanh trên điện thoại và máy tính.
+3. Allowed MIME types (Loại file được phép) - NÊN BẬT (ON)
+Tính năng này giúp bảo mật hệ thống, đảm bảo người dùng chỉ có thể upload ảnh chứ không phải các file lạ (như script hay virus).
+
+Gợi ý: Bạn nhập vào các định dạng ảnh phổ biến như: image/jpeg, image/png, image/webp. Điều này đảm bảo thư mục ảnh của bạn luôn "sạch".
+Tóm lại:
+
+Public: Phải chọn ON.
+Size limit: Nên chọn ON và đặt là 5MB.
+MIME types: Nên chọn ON và giới hạn các loại ảnh (image/*). image/jpeg, image/png, image/webp, video/mp4

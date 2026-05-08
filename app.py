@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, request
-from config import Config
+from config import Config, supabase
 import config as cfg
 import os
 import uuid
@@ -15,18 +15,23 @@ UPLOAD_FOLDER = os.path.join(cfg.PATH_PHAN_MEM, 'static/uploads/properties')
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-def delete_physical_images(image_list):
-    """Xóa các file ảnh vật lý khỏi thư mục upload."""
+def delete_cloud_images(image_list):
+    """Xóa các file ảnh khỏi Supabase Storage."""
     if not image_list:
         return
+    # Trích xuất tên file từ URL Supabase
+    paths = []
     for url in image_list:
+        if 'storage/v1/object/public/properties/' in url:
+            # Lấy phần tên file sau /properties/ và loại bỏ các tham số query nếu có
+            filename = url.split('/properties/')[-1].split('?')[0]
+            paths.append(filename)
+    
+    if paths:
         try:
-            filename = os.path.basename(url)
-            file_path = os.path.join(UPLOAD_FOLDER, filename)
-            if os.path.exists(file_path):
-                os.remove(file_path)
+            supabase.storage.from_('properties').remove(paths)
         except Exception as e:
-            print(f"Lỗi khi xóa file {url}: {e}")
+            print(f"Lỗi khi xóa ảnh trên Cloud: {e}")
 
 @app.route('/')
 def index():
@@ -35,17 +40,17 @@ def index():
 # Route để web gọi lấy thông tin khi cần
 @app.route('/api/config')
 def get_config():
-    # Trả về toàn bộ cấu hình cần thiết cho frontend
-    # Sáng tạo: Tự động lấy danh sách Quận/Huyện duy nhất từ các BĐS đang có, ưu tiên tiếng Anh
+    # Lấy dữ liệu mới nhất từ Supabase (dạng cột phẳng)
+    try:
+        Config.danh_sach_bds = supabase.table('properties').select("*").execute().data
+    except:
+        pass
+
     all_wards = []
     for p in Config.danh_sach_bds:
-        ward_data = p.get('quan_huyen')
-        if ward_data:
-            if isinstance(ward_data, dict):
-                # Lấy phiên bản tiếng Anh, nếu không có thì lấy bất kỳ ngôn ngữ nào khác
-                all_wards.append(ward_data.get('EN') or next(iter(ward_data.values()), ''))
-            else:
-                all_wards.append(str(ward_data)) # Xử lý dữ liệu cũ có thể là chuỗi
+        ward_en = p.get('quan_huyen_en')
+        if ward_en:
+            all_wards.append(str(ward_en))
     unique_wards = sorted(list(set(all_wards)))
 
     config_data = {
@@ -104,20 +109,34 @@ def upload_file():
     if file.filename == '':
         return jsonify({"success": False, "message": "No selected file"})
     
-    if file:
+    try:
         filename = secure_filename(file.filename)
         unique_filename = f"{uuid.uuid4().hex}_{filename}"
-        file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
-        file.save(file_path)
-        return jsonify({"success": True, "url": f"/static/uploads/properties/{unique_filename}"})
+        file_content = file.read()
+        
+        # Upload lên Supabase Storage bucket 'properties'
+        supabase.storage.from_('properties').upload(
+            path=unique_filename, 
+            file=file_content,
+            file_options={"content-type": file.content_type}
+        )
+        
+        # Lấy URL công khai
+        res_url = supabase.storage.from_('properties').get_public_url(unique_filename)
+        # Đảm bảo res_url là một chuỗi (phòng trường hợp thư viện trả về object)
+        if not isinstance(res_url, str):
+            res_url = getattr(res_url, 'public_url', str(res_url))
+            
+        return jsonify({"success": True, "url": res_url})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)})
 
 @app.route('/api/admin/delete-file', methods=['POST'])
 def delete_file():
-    """API để xóa nhanh một file ảnh (dùng cho ảnh vừa upload nhưng bị xóa ngay)."""
     try:
         url = request.json.get('url')
         if url:
-            delete_physical_images([url])
+            delete_cloud_images([url])
             return jsonify({"success": True})
     except Exception as e:
         print(e)
@@ -131,21 +150,23 @@ def admin_dashboard():
 def add_property():
     try:
         new_prop = request.json
-        # Lấy danh sách hiện tại, thêm mới và lưu lại
-        current_list = Config.danh_sach_bds
-        
-        # Chuẩn hóa mã BĐS mới: xóa khoảng trắng và chuyển thành chữ hoa
         new_ma_id = str(new_prop.get('ma_bds', '')).strip().upper()
         new_prop['ma_bds'] = new_ma_id
 
-        # Kiểm tra trùng mã BĐS (so sánh không phân biệt hoa thường)
-        if any(str(p.get('ma_bds', '')).strip().upper() == new_ma_id for p in current_list):
+        # Kiểm tra trùng mã trên DB
+        check = supabase.table('properties').select("ma_bds").eq("ma_bds", new_ma_id).execute()
+        if check.data:
             return jsonify({"success": False, "message": "EXISTED"})
             
-        current_list.append(new_prop)
-        if Config.save_properties(current_list):
-            return jsonify({"success": True})
-        return jsonify({"success": False, "message": "Could not save to file"})
+        # Thêm vào Supabase
+        supabase.table('properties').insert(new_prop).execute()
+        
+        # Đồng bộ lại cache local (không bắt buộc nếu bạn gọi lại API config,
+        # nhưng giúp cập nhật ngay lập tức mà không cần tải lại toàn bộ config)
+        if not hasattr(Config, 'danh_sach_bds'): Config.danh_sach_bds = []
+        Config.danh_sach_bds.append(new_prop)
+        Config.save_properties(Config.danh_sach_bds) # Lưu backup local
+        return jsonify({"success": True})
     except Exception as e:
         return jsonify({"success": False, "message": str(e)})
 
@@ -153,18 +174,17 @@ def add_property():
 def delete_property():
     try:
         ma_bds = request.json.get('ma_bds')
-        current_list = Config.danh_sach_bds
-        
-        # Tìm và xóa ảnh vật lý của BĐS trước khi xóa khỏi danh sách
-        prop_to_delete = next((p for p in current_list if p.get('ma_bds') == ma_bds), None)
-        if prop_to_delete:
-            delete_physical_images(prop_to_delete.get('anh_bds', []))
+        # Xóa trên Supabase
+        supabase.table('properties').delete().eq("ma_bds", ma_bds).execute()
 
-        new_list = [p for p in current_list if p.get('ma_bds') != ma_bds]
+        # Xóa ảnh cloud và cập nhật cache
+        prop_to_delete = next((p for p in Config.danh_sach_bds if p.get('ma_bds') == ma_bds), None)
+        if prop_to_delete:
+            delete_cloud_images(prop_to_delete.get('anh_bds', []))
         
-        if Config.save_properties(new_list):
-            return jsonify({"success": True})
-        return jsonify({"success": False, "message": "Could not save to file"})
+        Config.danh_sach_bds = [p for p in Config.danh_sach_bds if p.get('ma_bds') != ma_bds]
+        Config.save_properties(Config.danh_sach_bds)
+        return jsonify({"success": True})
     except Exception as e:
         return jsonify({"success": False, "message": str(e)})
 
@@ -173,21 +193,20 @@ def update_property():
     try:
         updated_prop = request.json
         ma_bds = updated_prop.get('ma_bds')
-        current_list = Config.danh_sach_bds
         
-        for i, p in enumerate(current_list):
+        for i, p in enumerate(Config.danh_sach_bds):
             if p.get('ma_bds') == ma_bds:
-                # So sánh ảnh cũ và mới để xóa các file không còn dùng
                 old_images = set(p.get('anh_bds', []))
                 new_images = set(updated_prop.get('anh_bds', []))
                 removed_images = old_images - new_images
-                delete_physical_images(list(removed_images))
+                delete_cloud_images(list(removed_images))
                 
-                current_list[i] = updated_prop
-                if Config.save_properties(current_list):
-                    return jsonify({"success": True})
-                break
-
+                # Cập nhật Supabase
+                supabase.table('properties').update(updated_prop).eq("ma_bds", ma_bds).execute()
+                
+                Config.danh_sach_bds[i] = updated_prop
+                Config.save_properties(Config.danh_sach_bds)
+                return jsonify({"success": True})
         return jsonify({"success": False, "message": "Property not found or save failed"})
     except Exception as e:
         return jsonify({"success": False, "message": str(e)})

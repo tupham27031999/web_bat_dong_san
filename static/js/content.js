@@ -343,8 +343,7 @@ function renderPropertiesForType(type) {
     // 2. Lọc theo Thanh tìm kiếm (Search Bar)
     if (searchState.dia_chi) {
         filtered = filtered.filter(p => {
-            const p_ward = (p.quan_huyen && typeof p.quan_huyen === 'object') ? p.quan_huyen['EN'] : (p.quan_huyen || '');
-            return p_ward === searchState.dia_chi;
+            return p.quan_huyen_en === searchState.dia_chi;
         });
     }
     if (searchState.so_phong_ngu) {
@@ -381,6 +380,8 @@ function renderPropertiesForType(type) {
         return;
     }
 
+    const langSuffix = currentLang.toLowerCase();
+
     container.innerHTML = paginatedItems.map(p => `
         <div class="property-card" onclick="showPropertyDetail('${p.ma_bds}')">
             ${renderBadge(p.phan_loai)}
@@ -390,7 +391,7 @@ function renderPropertiesForType(type) {
             }
             <div class="property-info">
                 <div class="property-price">${parseInt(p.gia_jpy || 0).toLocaleString()} <small>JPY</small></div>
-                <div class="property-title">${(p.ten_bds && typeof p.ten_bds === 'object' ? p.ten_bds[currentLang] : p.ten_bds) || 'No Name'}</div>
+                <div class="property-title">${p[`ten_bds_${langSuffix}`] || 'No Name'}</div>
                 <div class="property-location"><i class="fa-solid fa-location-dot"></i> ${formatJapaneseAddress(p)}</div>
                 <div class="property-details">
                     <span><i class="fas fa-bed"></i> ${p.so_phong_ngu || 0}</span>
@@ -462,11 +463,10 @@ window.changeLang = function(lang) {
 
 const formatJapaneseAddress = (item) => {
     if (!item) return '';
-    const pref = (item.tinh_thanh && typeof item.tinh_thanh === 'object') ? item.tinh_thanh[currentLang] : (item.tinh_thanh || '');
-    const ward = (item.quan_huyen && typeof item.quan_huyen === 'object') ? item.quan_huyen[currentLang] : (item.quan_huyen || '');
-    const detail = (item.dia_chi_chi_tiet && typeof item.dia_chi_chi_tiet === 'object') 
-                    ? item.dia_chi_chi_tiet[currentLang] 
-                    : item.dia_chi_chi_tiet || '';
+    const langSuffix = currentLang.toLowerCase();
+    const pref = item[`tinh_thanh_${langSuffix}`] || '';
+    const ward = item[`quan_huyen_${langSuffix}`] || '';
+    const detail = item[`dia_chi_chi_tiet_${langSuffix}`] || '';
     
     if (currentLang === 'JP') {
         return `〒${item.ma_buu_dien || ''} ${pref}${ward}${detail}`;
@@ -486,7 +486,8 @@ window.showPropertyDetail = function(ma_bds) {
     detailView.style.display = 'block';
 
     const labels = configData.thong_tin_bds_form;
-    const name = (prop.ten_bds && typeof prop.ten_bds === 'object') ? prop.ten_bds[currentLang] : prop.ten_bds;
+    const langSuffix = currentLang.toLowerCase();
+    const name = prop[`ten_bds_${langSuffix}`] || '';
 
     const dict = {
         back: { VI: "Quay lại danh sách", EN: "Back to list", JP: "リストに戻る" },
@@ -559,8 +560,7 @@ window.showPropertyDetail = function(ma_bds) {
                 <div class="detail-section">
                     <div class="detail-section-title"><i class="fas fa-file-lines"></i> ${dict.overview[currentLang]}</div>
                     <p style="color: var(--text-sub); line-height: 2; font-size: 1.05rem; white-space: pre-line;">
-                        ${(prop.mo_ta && prop.mo_ta[currentLang]) ? prop.mo_ta[currentLang] : 
-                          (currentLang === 'VI' ? 'Thông tin mô tả đang được cập nhật...' : 'Description is being updated...')}
+                        ${prop[`mo_ta_${langSuffix}`] || (currentLang === 'VI' ? 'Thông tin mô tả đang được cập nhật...' : 'Description is being updated...')}
                     </p>
                 </div>
 
