@@ -13,8 +13,11 @@ app = Flask(__name__)
 app.json.sort_keys = False
 
 UPLOAD_FOLDER = os.path.join(cfg.PATH_PHAN_MEM, 'static/uploads/properties')
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+try:
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+except Exception as e:
+    print(f"Warning: Could not create upload folder: {e}", file=sys.stderr)
 
 def delete_cloud_images(image_list):
     """Xóa các file ảnh khỏi Supabase Storage."""

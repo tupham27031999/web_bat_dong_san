@@ -15,17 +15,21 @@ env_path = os.path.join(PATH_PHAN_MEM, ".env")
 
 if os.path.exists(env_path):
     load_dotenv(env_path)
-    print(f"--- DEBUG: Da load file .env tai {env_path} ---", file=sys.stderr)
+    # Flush ngay lập tức để không bị kẹt trong buffer của PythonAnywhere
+    sys.stderr.write(f"--- DEBUG: Da load file .env tai {env_path} ---\n")
+    sys.stderr.flush()
 else:
-    print(f"--- DEBUG ERROR: Khong tim thay file .env tai {env_path} ---", file=sys.stderr)
+    sys.stderr.write(f"--- DEBUG ERROR: Khong tim thay file .env tai {env_path} ---\n")
+    sys.stderr.flush()
 
 # Cấu hình Supabase (Thay thế bằng thông tin thực tế của bạn)
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://vtnbztateavctntwpkzg.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 if not SUPABASE_KEY:
-    error_msg = f"CRITICAL: SUPABASE_KEY missing. Looked in: {env_path}"
-    print(error_msg, file=sys.stderr)
+    error_msg = f"CRITICAL ERROR: SUPABASE_KEY is missing! Path searched: {env_path}\n"
+    sys.stderr.write(error_msg)
+    sys.stderr.flush()
     raise ValueError(error_msg)
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
