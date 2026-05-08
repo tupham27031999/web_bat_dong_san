@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 from config import Config, supabase
+import sys
 import config as cfg
 import os
 import uuid
@@ -42,9 +43,11 @@ def index():
 def get_config():
     # Lấy dữ liệu mới nhất từ Supabase (dạng cột phẳng)
     try:
-        Config.danh_sach_bds = supabase.table('properties').select("*").execute().data
-    except:
-        pass
+        response = supabase.table('properties').select("*").execute()
+        Config.danh_sach_bds = response.data
+    except Exception as e:
+        print(f"Error fetching properties: {e}", file=sys.stderr)
+        # Giữ lại dữ liệu cũ hoặc danh sách trống thay vì crash
 
     all_wards = []
     for p in Config.danh_sach_bds:
