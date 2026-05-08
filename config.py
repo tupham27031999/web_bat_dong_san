@@ -10,13 +10,12 @@ def edit_path(input):
 PATH_PHAN_MEM = edit_path(os.path.dirname(os.path.realpath(__file__)))
 
 # Load biến môi trường từ file .env với đường dẫn tuyệt đối
-env_path = os.path.join(PATH_PHAN_MEM, ".env")
+env_path = os.path.abspath(os.path.join(PATH_PHAN_MEM, ".env"))
+import sys
 if os.path.exists(env_path):
     load_dotenv(env_path)
-    print(f"DEBUG: Da load file .env tai {env_path}")
+    print(f"DEBUG: Da load file .env tai {env_path}", file=sys.stderr)
 else:
-    # In ra Error Log của PythonAnywhere để kiểm tra đường dẫn thực tế
-    import sys
     print(f"DEBUG ERROR: Khong tim thay file .env tai {env_path}", file=sys.stderr)
 
 # Cấu hình Supabase (Thay thế bằng thông tin thực tế của bạn)
@@ -24,7 +23,7 @@ SUPABASE_URL = os.getenv("SUPABASE_URL", "https://vtnbztateavctntwpkzg.supabase.
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 if not SUPABASE_KEY:
-    print(f"DEBUG: SUPABASE_KEY hien dang trong. PATH_PHAN_MEM: {PATH_PHAN_MEM}")
+    print(f"DEBUG: SUPABASE_KEY hien dang trong. PATH_PHAN_MEM: {PATH_PHAN_MEM}", file=sys.stderr)
     raise ValueError("Lỗi: Không tìm thấy SUPABASE_KEY trong file .env hoặc biến môi trường!")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
