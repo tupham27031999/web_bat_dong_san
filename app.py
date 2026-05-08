@@ -24,7 +24,7 @@ def delete_cloud_images(image_list):
     for url in image_list:
         if 'storage/v1/object/public/properties/' in url:
             # Lấy phần tên file sau /properties/ và loại bỏ các tham số query nếu có
-            filename = url.split('/properties/')[-1].split('?')[0]
+            filename = url.split('/public/properties/')[-1].split('?')[0]
             paths.append(filename)
     
     if paths:
