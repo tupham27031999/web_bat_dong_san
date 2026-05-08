@@ -1,0 +1,55 @@
+{
+    "company_info": {
+        "logo_text": "Housing.jp",
+        "slogan": {
+            "VI": "Tìm ngôi nhà hoàn hảo của bạn tại Nhật Bản. Dịch vụ uy tín, tận tâm.",
+            "EN": "Find Your Perfect Home in Japan. Reliable and dedicated services.",
+            "JP": "日本であなたの理想の住まいを見つけましょう。安心と信頼のサービス。"
+        },
+        "dmca_text": "MBDS Protected",
+        "copyright": "© 2026 A Realty Japan. All rights reserved."
+    },
+    "sections": [
+        {
+            "title": { "VI": "Dịch vụ", "EN": "Services", "JP": "サービス" },
+            "links": [
+                { "label": { "VI": "Cho thuê", "EN": "Rent", "JP": "賃貸" }, "url": "#" },
+                { "label": { "VI": "Mua bán", "EN": "Buy", "JP": "売買" }, "url": "#" }
+            ]
+        },
+        {
+            "title": { "VI": "Công ty", "EN": "Company", "JP": "会社情報" },
+            "links": [
+                { "label": { "VI": "Về chúng tôi", "EN": "About Us", "JP": "会社概要" }, "url": "#" },
+                { "label": { "VI": "Blog tin tức", "EN": "Blog", "JP": "ブログ" }, "url": "#" },
+                { "label": { "VI": "Chính sách bảo mật", "EN": "Privacy Policy", "JP": "プライバシーポリシー" }, "url": "#" }
+            ]
+        }
+    ],
+    "contact": {
+        "title": { "VI": "Liên hệ", "EN": "Contact", "JP": "お問い合わせ" },
+        "tel": "03-0000-0000",
+        "email": "info@arealty.jp",
+        "opening_hours": {
+            "label": { "VI": "Giờ làm việc", "EN": "Opening Hours", "JP": "営業時間" },
+            "detail": {
+                "VI": "10 AM - 07 PM\nChủ nhật, Thứ tư: Nghỉ",
+                "EN": "10 AM - 07 PM\nSunday, Wednesday: Closed",
+                "JP": "10 AM - 07 PM\n日曜日、水曜日：定休日"
+            }
+        },
+        "address": {
+            "label": { "VI": "Địa chỉ", "EN": "Address", "JP": "住所" },
+            "detail": {
+                "VI": "Tòa nhà xxx 605, 1-4, Hyakunincho, Shinjuku, Tokyo 169-0073",
+                "EN": "xxx Building 605, 1-4, Hyakunincho, Shinjuku City, Tokyo 169-0073",
+                "JP": "〒169-0073 東京都新宿区百人町1-4 東 605"
+            }
+        },
+        "socials": [
+            { "icon": "fab fa-facebook-f", "url": "#" },
+            { "icon": "fab fa-instagram", "url": "#" },
+            { "icon": "fab fa-line", "url": "#" }
+        ]
+    }
+}

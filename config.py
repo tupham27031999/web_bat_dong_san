@@ -1,16 +1,21 @@
 # config.py
 import os
 import json
-from supabase import create_client, Client
-from dotenv import load_dotenv
+import sys
+
+try:
+    from supabase import create_client, Client
+    from dotenv import load_dotenv
+except ImportError as e:
+    sys.stderr.write(f"CRITICAL ERROR: Missing library! {e}\n")
+    sys.stderr.flush()
+    raise
 
 def edit_path(input):
     return input.replace("\\", "/")
 
 PATH_PHAN_MEM = edit_path(os.path.dirname(os.path.realpath(__file__)))
 
-# Load biến môi trường từ file .env
-import sys
 env_path = os.path.join(PATH_PHAN_MEM, ".env")
 
 if os.path.exists(env_path):
@@ -27,7 +32,7 @@ SUPABASE_URL = os.getenv("SUPABASE_URL", "https://vtnbztateavctntwpkzg.supabase.
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 if not SUPABASE_KEY:
-    error_msg = f"CRITICAL ERROR: SUPABASE_KEY is missing! Path searched: {env_path}\n"
+    error_msg = f"CRITICAL ERROR: SUPABASE_KEY is None! Looked in .env at: {env_path}\n"
     sys.stderr.write(error_msg)
     sys.stderr.flush()
     raise ValueError(error_msg)

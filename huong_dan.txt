@@ -122,3 +122,7 @@ Tóm lại:
 Public: Phải chọn ON.
 Size limit: Nên chọn ON và đặt là 5MB.
 MIME types: Nên chọn ON và giới hạn các loại ảnh (image/*). image/jpeg, image/png, image/webp, video/mp4
+
+
+git fetch --all
+git reset --hard origin/main
