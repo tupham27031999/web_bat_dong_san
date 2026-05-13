@@ -9,13 +9,12 @@ try:
 except ImportError as e:
     sys.stderr.write(f"CRITICAL ERROR: Missing library! {e}\n")
     sys.stderr.flush()
-    raise
+    supabase = None
 
 def edit_path(input):
     return input.replace("\\", "/")
 
 PATH_PHAN_MEM = edit_path(os.path.dirname(os.path.realpath(__file__)))
-
 env_path = os.path.join(PATH_PHAN_MEM, ".env")
 
 if os.path.exists(env_path):
@@ -32,13 +31,16 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 if not SUPABASE_URL or not SUPABASE_KEY:
-    error_msg = f"CRITICAL ERROR: SUPABASE_URL or SUPABASE_KEY is missing! Check .env at: {env_path}\n"
+    error_msg = f"WARNING: SUPABASE_URL or SUPABASE_KEY is missing! Check .env at: {env_path}\n"
     sys.stderr.write(error_msg)
     sys.stderr.flush()
-    # Thay vì raise lỗi ngay lập tức làm sập app, ta có thể khởi tạo null và kiểm tra sau
-    supabase = None
-else:
+
+# Khởi tạo client, nếu thiếu key thì biến supabase sẽ lỗi khi gọi hàm
+if 'create_client' in globals() and SUPABASE_URL and SUPABASE_KEY:
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+else:
+    if 'supabase' not in globals():
+        supabase = None
 
 
 path_logo = "/static/logo.PNG"

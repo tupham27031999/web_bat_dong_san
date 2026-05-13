@@ -21,7 +21,7 @@ except Exception as e:
 
 def delete_cloud_images(image_list):
     """Xóa các file ảnh khỏi Supabase Storage."""
-    if not image_list:
+    if not image_list or not supabase:
         return
     # Trích xuất tên file từ URL Supabase
     paths = []
@@ -118,6 +118,8 @@ def upload_file():
     if file.filename == '':
         return jsonify({"success": False, "message": "No selected file"})
     
+    if not supabase:
+        return jsonify({"success": False, "message": "Supabase client not initialized"})
     try:
         filename = secure_filename(file.filename)
         unique_filename = f"{uuid.uuid4().hex}_{filename}"
@@ -162,6 +164,8 @@ def admin_dashboard():
 
 @app.route('/api/admin/add-property', methods=['POST'])
 def add_property():
+    if not supabase:
+        return jsonify({"success": False, "message": "Supabase connection error"})
     try:
         new_prop = request.json
         new_ma_id = str(new_prop.get('ma_bds', '')).strip().upper()
