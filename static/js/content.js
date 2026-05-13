@@ -23,6 +23,10 @@ let currentBuyPage = 1;
 async function initApp() {
     try {
         const response = await fetch('/api/config');
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || `HTTP Error: ${response.status}`);
+        }
         configData = await response.json();
         currentLang = configData.ngon_ngu_mac_dinh;
         
@@ -90,7 +94,7 @@ function applyZoom() {
 
 function renderNavbar() {
     const navElement = document.getElementById("main-nav");
-    if (!navElement || !configData) return;
+    if (!navElement || !configData || !configData.thong_tin_tieu_de) return;
 
     const info = configData.thong_tin_tieu_de;
     const admin = configData.lua_chon_admin;

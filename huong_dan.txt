@@ -126,3 +126,7 @@ MIME types: Nên chọn ON và giới hạn các loại ảnh (image/*). image/j
 
 git fetch --all
 git reset --hard origin/main
+
+gõ trong cmd: workon myenv
+sẽ ra: (myenv) 11:03 ~/web_bat_dong_san (main)$ 
+cần cài trong môi trường ảo
