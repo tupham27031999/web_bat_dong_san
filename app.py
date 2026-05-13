@@ -45,6 +45,9 @@ def index():
 @app.route('/api/config')
 def get_config():
     # Lấy dữ liệu mới nhất từ Supabase (dạng cột phẳng)
+    if supabase is None:
+        return jsonify({"error": "Supabase client not initialized. Check .env file."}), 500
+
     try:
         response = supabase.table('properties').select("*").execute()
         Config.danh_sach_bds = response.data
