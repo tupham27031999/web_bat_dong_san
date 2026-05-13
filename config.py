@@ -21,23 +21,25 @@ env_path = os.path.join(PATH_PHAN_MEM, ".env")
 if os.path.exists(env_path):
     load_dotenv(env_path)
     # Flush ngay lập tức để không bị kẹt trong buffer của PythonAnywhere
-    sys.stderr.write(f"--- DEBUG: Da load file .env tai {env_path} ---\n")
+    sys.stderr.write(f"--- INFO: Loaded .env from {env_path} ---\n")
     sys.stderr.flush()
 else:
-    sys.stderr.write(f"--- DEBUG ERROR: Khong tim thay file .env tai {env_path} ---\n")
+    sys.stderr.write(f"--- WARNING: .env file NOT FOUND at {env_path}. Using environment variables. ---\n")
     sys.stderr.flush()
 
 # Cấu hình Supabase (Thay thế bằng thông tin thực tế của bạn)
-SUPABASE_URL = os.getenv("SUPABASE_URL", "https://vtnbztateavctntwpkzg.supabase.co")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-if not SUPABASE_KEY:
-    error_msg = f"CRITICAL ERROR: SUPABASE_KEY is None! Looked in .env at: {env_path}\n"
+if not SUPABASE_URL or not SUPABASE_KEY:
+    error_msg = f"CRITICAL ERROR: SUPABASE_URL or SUPABASE_KEY is missing! Check .env at: {env_path}\n"
     sys.stderr.write(error_msg)
     sys.stderr.flush()
-    raise ValueError(error_msg)
+    # Thay vì raise lỗi ngay lập tức làm sập app, ta có thể khởi tạo null và kiểm tra sau
+    supabase = None
+else:
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 path_logo = "/static/logo.PNG"
 path_hinh_nen = "/static/nen_bat_dong_san.jpg"
@@ -46,11 +48,12 @@ path_avatar_mua = "/static/slogan_buy.png"  # Đường dẫn ảnh avatar cho p
 
 def load_admin_credentials():
     try:
-        response = supabase.table('admin').select("*").limit(1).execute()
-        if response.data:
-            return response.data[0]
+        if supabase:
+            response = supabase.table('admin').select("*").limit(1).execute()
+            if response.data:
+                return response.data[0]
     except Exception as e:
-        print(f"Lỗi khi đọc admin từ Supabase: {e}")
+        sys.stderr.write(f"Lỗi khi đọc admin từ Supabase: {e}\n")
     admin_file = os.path.join(PATH_PHAN_MEM, "admin.json")
     if os.path.exists(admin_file):
         try:
