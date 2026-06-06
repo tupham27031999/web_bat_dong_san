@@ -41,6 +41,22 @@ def delete_cloud_images(image_list):
 def index():
     return render_template('index.html')
 
+@app.route('/blog')
+def blog_page():
+    return render_template('blog.html')
+
+@app.route('/about')
+def about_page():
+    return render_template('about.html')
+
+@app.route('/api/status')
+def get_status():
+    """Endpoint kiểm tra trạng thái hoạt động của server và kết nối Database."""
+    return jsonify({
+        "status": "online",
+        "database": "connected" if supabase is not None else "disconnected"
+    })
+
 # Route để web gọi lấy thông tin khi cần
 @app.route('/api/config')
 def get_config():
@@ -73,12 +89,19 @@ def get_config():
         "admin_window": Config.admin_window,
         "admin_auth": Config.admin, # Tạm thời để test so sánh ở frontend
         "thong_tin_bds_form": Config.thong_tin_bds_form,
+        "thong_tin_blog_form": Config.thong_tin_blog_form,
         "danh_sach_bds": Config.danh_sach_bds,
         "admin_dashboard_labels": Config.admin_dashboard_labels,
         "cac_lua_chon_thue": Config.cac_lua_chon_thue, # New
         "cac_lua_chon_mua": Config.cac_lua_chon_mua,   # New
         "thong_tin_danh_sach_BDS": Config.thong_tin_danh_sach_BDS,
-        "footer_data": Config.footer_data
+        "footer_data": Config.footer_data,
+        "blog_categories": Config.blog_categories,
+        "blog_ui": Config.blog_ui,
+        "path_hinh_nen_blog": cfg.path_hinh_nen_blog,
+        "tab_gioi_thieu": Config.tab_gioi_thieu,
+        "thong_tin_thanh_vien": Config.thong_tin_thanh_vien,
+        "path_hinh_nen_gioi_thieu": cfg.path_hinh_nen_gioi_thieu
     }
     # Chỉnh sửa path logo để web có thể truy cập được
     config_data["thong_tin_tieu_de"]["path_logo"] = cfg.path_logo
@@ -86,6 +109,21 @@ def get_config():
     config_data["path_avatar_thue"] = cfg.path_avatar_thue # New
     config_data["path_avatar_mua"] = cfg.path_avatar_mua   # New
     return jsonify(config_data)
+
+@app.route('/api/blog-posts')
+def get_blog_posts():
+    category = request.args.get('category', 'tat_ca')
+    
+    if supabase is None:
+        return jsonify([])
+
+    query = supabase.table('blog_posts').select("*")
+    
+    if category != 'tat_ca':
+        query = query.eq('category_key', category)
+        
+    response = query.order('created_at', desc=True).execute()
+    return jsonify(response.data)
 
 @app.route('/api/admin/login', methods=['POST'])
 def admin_login():
@@ -226,6 +264,35 @@ def update_property():
                 Config.save_properties(Config.danh_sach_bds)
                 return jsonify({"success": True})
         return jsonify({"success": False, "message": "Property not found or save failed"})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)})
+
+@app.route('/api/admin/add-blog', methods=['POST'])
+def add_blog():
+    try:
+        new_blog = request.json
+        supabase.table('blog_posts').insert(new_blog).execute()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)})
+
+@app.route('/api/admin/update-blog', methods=['POST'])
+def update_blog():
+    try:
+        updated_blog = request.json
+        blog_id = updated_blog.get('id')
+        supabase.table('blog_posts').update(updated_blog).eq("id", blog_id).execute()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)})
+
+@app.route('/api/admin/delete-blog', methods=['POST'])
+def delete_blog():
+    try:
+        blog_id = request.json.get('id')
+        # Xóa bài viết
+        supabase.table('blog_posts').delete().eq("id", blog_id).execute()
+        return jsonify({"success": True})
     except Exception as e:
         return jsonify({"success": False, "message": str(e)})
 

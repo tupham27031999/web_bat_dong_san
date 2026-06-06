@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog - Housing.jp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav id="main-nav" class="navbar"></nav>
+
+    <div id="blog-hero" class="hero" style="min-height: 400px; padding-top: 150px;">
+        <div class="hero-content">
+            <h1 id="blog-hero-title" class="hero-slogan-main">Blog & Kiến thức</h1>
+            <p id="blog-hero-sub" style="font-size: 1.2rem; opacity: 0.9;">Chia sẻ kinh nghiệm sống và thuê nhà tại Nhật Bản</p>
+        </div>
+    </div>
+
+    <div id="main-content-wrapper">
+        <div class="blog-category-bar admin-card" style="margin-bottom: 30px; padding: 20px;">
+            <div id="blog-categories" class="filter-tags" style="justify-content: center;">
+                <!-- Categories will render here -->
+            </div>
+        </div>
+
+        <div id="blog-post-grid" class="property-grid">
+            <!-- Blog items will render here -->
+        </div>
+    </div>
+
+    <div id="blog-detail-view" class="detail-view-container" style="display: none; background: white; margin-top: -50px; position: relative; z-index: 10; border-radius: 30px 30px 0 0; padding-top: 60px;"></div>
+
+    <footer id="main-footer" class="footer"></footer>
+
+    <div id="modal-container" class="modal-overlay"></div>
+
+    <script src="{{ url_for('static', filename='js/blog.js') }}"></script>
+</body>
+</html>

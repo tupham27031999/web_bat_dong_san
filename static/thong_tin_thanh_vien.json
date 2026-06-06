@@ -1,0 +1,2 @@
+{"thanh_vien_1": {"ten": {"VI": "person1", "EN": "person1", "JP": "person1"}, "chuc_vu": {"VI": "leader", "EN": "leader", "JP": "leader"}, "link_anh": "/static/anh_thanh_vien/thanh_vien_1.jpeg"},
+"thanh_vien_2": {"ten": {"VI": "person2", "EN": "person2", "JP": "person2"}, "chuc_vu": {"VI": "deputy leader", "EN": "deputy leader", "JP": "deputy leader", "link_anh": "/static/anh_thanh_vien/thanh_vien_2.jpeg"}}}

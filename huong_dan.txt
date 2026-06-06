@@ -130,3 +130,6 @@ git reset --hard origin/main
 gõ trong cmd: workon myenv
 sẽ ra: (myenv) 11:03 ~/web_bat_dong_san (main)$ 
 cần cài trong môi trường ảo
+
+
+SUPABASE_KEY lấy trong Publishable key

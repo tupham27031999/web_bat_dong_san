@@ -9,6 +9,13 @@
     <link rel="shortcut icon" href="#">
     <!-- Leaflet CSS for Maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        /* Đảm bảo liên kết blog có thể click được */
+        .nav-center a[href^="/"] {
+            pointer-events: auto;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <nav id="main-nav" class="navbar"></nav>

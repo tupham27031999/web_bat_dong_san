@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>About - Housing.jp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav id="main-nav" class="navbar"></nav>
+
+    <div id="about-hero" class="hero" style="min-height: 450px; padding-top: 150px;">
+        <div class="hero-content">
+            <h1 id="about-hero-title" class="hero-slogan-main" style="font-size: 3.5rem;"></h1>
+        </div>
+    </div>
+
+    <div id="about-content-wrapper" class="detail-view-container" style="background: white; margin-top: -50px; position: relative; z-index: 10; border-radius: 30px 30px 0 0; padding: 80px 40px; box-shadow: 0 -10px 30px rgba(0,0,0,0.05);">
+        <!-- Giới thiệu chung -->
+        <section id="about-intro" style="max-width: 900px; margin: 0 auto 80px; text-align: center;">
+            <h2 id="about-intro-title" style="font-size: 2.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 30px;"></h2>
+            <p id="about-intro-text" style="font-size: 1.15rem; line-height: 2; color: var(--text-sub); white-space: pre-line;"></p>
+        </section>
+
+        <!-- Dịch vụ / Thông tin 1-5 -->
+        <section id="about-services" class="property-grid" style="margin-bottom: 100px;"></section>
+
+        <!-- Team Section -->
+        <section id="about-team" style="border-top: 1px solid #eee; padding-top: 80px; text-align: center;">
+            <div id="team-label" class="lang-badge" style="background: var(--primary-color); color: white; margin-bottom: 15px; font-size: 0.9rem; padding: 6px 20px;"></div>
+            <h2 id="team-title" style="font-size: 2.2rem; font-weight: 800; margin-bottom: 60px;"></h2>
+            <div id="team-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px;"></div>
+        </section>
+    </div>
+
+    <footer id="main-footer" class="footer"></footer>
+    <div id="modal-container" class="modal-overlay"></div>
+
+    <script src="{{ url_for('static', filename='js/about.js') }}"></script>
+</body>
+</html>

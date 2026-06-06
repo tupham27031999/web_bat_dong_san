@@ -28,7 +28,9 @@ async function initApp() {
             throw new Error(errData.error || `HTTP Error: ${response.status}`);
         }
         configData = await response.json();
-        currentLang = configData.ngon_ngu_mac_dinh;
+        
+        const savedLang = sessionStorage.getItem('currentLang');
+        currentLang = savedLang || configData.ngon_ngu_mac_dinh;
         
         // Khôi phục trạng thái tìm kiếm từ sessionStorage nếu có
         const savedSearch = sessionStorage.getItem('searchState');
@@ -105,10 +107,11 @@ function renderNavbar() {
             <span>${info.tieu_de_ten_web[currentLang]}</span>
         </div>
         <div class="nav-center">
+            <a href="/" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;"><i class="fa-solid fa-house"></i> ${info.trang_chu[currentLang]}</a>
             <a href="javascript:void(0)" id="nav-rent" onclick="scrollToSection('Rent')" class="${selectedPropertyType === 'Rent' ? 'active-property-type' : ''}"><i class="fa-solid fa-key"></i> ${info.thue[currentLang]}</a>
             <a href="javascript:void(0)" id="nav-buy" onclick="scrollToSection('Buy')" class="${selectedPropertyType === 'Buy' ? 'active-property-type' : ''}"><i class="fa-solid fa-house-chimney"></i> ${info.mua[currentLang]}</a>
-            <a href="javascript:void(0)"><i class="fas fa-newspaper"></i> ${info.blog[currentLang]}</a>
-            <a href="javascript:void(0)"><i class="fas fa-circle-info"></i> ${info.about[currentLang]}</a>
+            <a href="/blog"><i class="fas fa-newspaper"></i> ${info.blog[currentLang]}</a>
+            <a href="/about"><i class="fas fa-circle-info"></i> ${info.about[currentLang]}</a>
             <a href="javascript:void(0)"><i class="fas fa-envelope"></i> ${info.contact[currentLang]}</a>
         </div>
         <div class="nav-right">
@@ -456,6 +459,7 @@ function getLangLabel(code) {
 
 window.changeLang = function(lang) {
     currentLang = lang;
+    sessionStorage.setItem('currentLang', lang); // Lưu lại lựa chọn ngôn ngữ
     renderNavbar();
     renderHero();
     updateSectionTitles();
